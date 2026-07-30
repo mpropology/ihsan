@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ihsan Kolektor — Lazismu Pekalongan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#FFFFFF;
+    --cream:#FFF8F0;
+    --cream-2:#FBEFE1;
+    --orange:#F2760C;
+    --orange-deep:#D9600A;
+    --amber:#FFB347;
+    --ink:#2B2118;
+    --ink-soft:#6B5D4F;
+    --line:#EEE1D2;
+    --good:#3E8F5C;
+    --bad:#C4432B;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--white);
+    color:var(--ink);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  h1,h2,h3,.display{ font-family:'Fraunces', serif; font-optical-sizing:auto; }
+  button{ font-family:inherit; cursor:pointer; }
+  input, select, textarea{ font-family:inherit; }
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  /* ===================== TOP BAR (shared) ===================== */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 24px;
+    background:var(--white);
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    z-index:30;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    font-size:15px;
+  }
+  .brand .mark{
+    width:32px; height:32px;
+    border-radius:9px;
+    background:linear-gradient(155deg, var(--orange), var(--orange-deep));
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+  }
+  .btn-login{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    border:1.5px solid var(--orange);
+    background:var(--white);
+    color:var(--orange-deep);
+    font-weight:700;
+    font-size:13px;
+    padding:9px 16px;
+    border-radius:999px;
+    transition:background .15s, color .15s;
+  }
+  .btn-login:hover{ background:var(--orange); color:var(--white); }
+
+  .who{
+    display:none;
+    align-items:center;
+    gap:10px;
+  }
+  .who .avatar{
+    width:30px; height:30px;
+    border-radius:50%;
+    background:var(--cream-2);
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700;
+    color:var(--orange-deep);
+    font-size:13px;
+  }
+  .who .meta{ line-height:1.25; }
+  .who .name{ font-size:13px; font-weight:700; }
+  .who .role{ font-size:11px; color:var(--ink-soft); }
+  .who button{
+    border:none;
+    background:none;
+    color:var(--ink-soft);
+    font-size:12px;
+    text-decoration:underline;
+    margin-left:6px;
+  }
+
+  /* ===================== LANDING / LEADERBOARD VIEW ===================== */
+  #landingHeader{
+    background:linear-gradient(155deg, var(--orange) 0%, var(--orange-deep) 62%, #B84E08 100%);
+    color:var(--white);
+    padding:32px 24px 60px;
+    position:relative;
+    overflow:hidden;
+  }
+  #landingHeader::after{
+    content:"";
+    position:absolute;
+    right:-60px; top:-60px;
+    width:260px; height:260px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.08);
+  }
+  .hero{ max-width:960px; margin:0 auto; position:relative; z-index:1; }
+  .hero .eyebrow{
+    font-size:13px; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.14em; opacity:0.85; margin-bottom:10px;
+  }
+  .hero h1{
+    font-size:clamp(26px, 4.5vw, 40px);
+    font-weight:700; line-height:1.15; max-width:600px; margin-bottom:22px;
+  }
+  .stat-row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .stat-card{
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.24);
+    border-radius:16px; padding:16px 20px; min-width:150px; flex:1;
+  }
+  .stat-card .num{ font-family:'Fraunces', serif; font-size:26px; font-weight:700; line-height:1.1; }
+  .stat-card .label{ font-size:12px; opacity:0.85; margin-top:4px; }
+
+  main{ max-width:960px; margin:0 auto; padding:0 20px 60px; position:relative; }
+  #landingMain{ margin-top:-38px; z-index:2; }
+
+  .panel{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:0 20px 40px -30px rgba(43,33,24,0.25);
+    padding:26px 22px;
+    margin-bottom:18px;
+  }
+  .panel-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    flex-wrap:wrap; gap:8px; margin-bottom:22px;
+  }
+  .panel-head h2{ font-size:22px; font-weight:600; }
+  .panel-head .sub{ font-size:13px; color:var(--ink-soft); }
+  .updated{ font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:6px; }
+  .updated::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--good); }
+
+  .row{
+    display:grid; grid-template-columns:40px 1fr 120px;
+    align-items:center; gap:16px; padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .row:last-child{ border-bottom:none; }
+  .rank{ font-family:'Fraunces', serif; font-weight:700; font-size:20px; color:var(--ink-soft); text-align:center; }
+  .row.top1 .rank, .row.top2 .rank, .row.top3 .rank{ color:var(--orange-deep); }
+  .ranting-info{ min-width:0; }
+  .ranting-name{ font-weight:700; font-size:15px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ranting-meta{ font-size:12px; color:var(--ink-soft); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+  .tag-mini{
+    display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px;
+    border-radius:999px; letter-spacing:0.02em;
+  }
+  .tag-mini.ranting{ background:var(--cream-2); color:var(--orange-deep); border:1px solid #F3D9BB; }
+  .tag-mini.aum{ background:#EAF3EC; color:var(--good); border:1px solid #CFE7D6; }
+  .row.top1 .ranting-name::before{ content:"🥇 "; }
+  .row.top2 .ranting-name::before{ content:"🥈 "; }
+  .row.top3 .ranting-name::before{ content:"🥉 "; }
+
+  .kaleng-track{ position:relative; height:14px; border-radius:7px; background:var(--cream-2); border:1px solid var(--line); overflow:hidden; }
+  .kaleng-fill{
+    height:100%; border-radius:7px 0 0 7px;
+    background:linear-gradient(90deg, var(--amber), var(--orange));
+    position:relative; animation:fillIn 1.1s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .kaleng-fill::after{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(115deg, rgba(255,255,255,0.35) 0px, rgba(255,255,255,0.35) 2px, transparent 2px, transparent 10px);
+    opacity:0.5;
+  }
+  @keyframes fillIn{ from{ width:0%; } }
+  @media (prefers-reduced-motion: reduce){ .kaleng-fill{ animation:none; } }
+
+  .amount{ text-align:right; }
+  .amount .rp{ font-weight:800; font-size:15px; }
+  .amount .pct{ font-size:11px; color:var(--ink-soft); }
+
+  .note{
+    display:flex; gap:12px; background:var(--cream); border:1px solid var(--line);
+    border-radius:16px; padding:16px 18px; font-size:13px; color:var(--ink-soft); line-height:1.5;
+  }
+  .note b{ color:var(--ink); }
+
+  footer{ text-align:center; padding:26px 20px 40px; font-size:12px; color:var(--ink-soft); }
+  footer .brand-foot{ font-weight:700; color:var(--orange-deep); }
+
+  /* ===================== LOGIN VIEW ===================== */
+  #loginView{
+    min-height:calc(100vh - 65px);
+    display:flex; align-items:center; justify-content:center;
+    padding:40px 20px; position:relative; overflow:hidden;
+  }
+  #loginView.active{ display:flex; }
+  #loginView::before{
+    content:""; position:absolute; top:-120px; right:-120px; width:340px; height:340px;
+    border-radius:50%; background:radial-gradient(circle, rgba(242,118,12,0.14), transparent 70%);
+  }
+  #loginView::after{
+    content:""; position:absolute; bottom:-140px; left:-100px; width:320px; height:320px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,179,71,0.16), transparent 70%);
+  }
+  .login-card{
+    background:var(--white); border:1px solid var(--line); border-radius:22px;
+    box-shadow:0 30px 60px -30px rgba(43,33,24,0.28);
+    width:100%; max-width:380px; padding:34px 30px 30px; position:relative; z-index:1;
+  }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700;
+    color:var(--ink-soft); margin-bottom:16px; background:none; border:none;
+  }
+  .login-mark{
+    width:52px; height:52px; border-radius:16px;
+    background:linear-gradient(155deg, var(--amber), var(--orange-deep));
+    display:flex; align-items:center; justify-content:center; font-size:26px;
+    margin-bottom:18px; box-shadow:0 10px 22px -10px rgba(217,96,10,0.55);
+  }
+  .login-card .eyebrow{ font-size:12px; font-weight:700; color:var(--orange-deep); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+  .login-card h1{ font-size:24px; font-weight:700; margin-bottom:6px; }
+  .login-card .desc{ font-size:13px; color:var(--ink-soft); margin-bottom:26px; line-height:1.5; }
+
+  .role-toggle{ display:flex; gap:8px; margin-bottom:18px; }
+  .role-btn{
+    flex:1; padding:10px; border-radius:11px; border:1.5px solid var(--line);
+    background:var(--cream); font-size:12.5px; font-weight:700; color:var(--ink-soft);
+    transition:all .15s;
+  }
+  .role-btn.active{ border-color:var(--orange); background:var(--white); color:var(--orange-deep); box-shadow:0 0 0 3px rgba(242,118,12,0.12); }
+
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; color:var(--ink); }
+  .field input, .field select{
+    width:100%; padding:12px 14px; border-radius:11px; border:1.5px solid var(--line);
+    background:var(--cream); font-size:14px; color:var(--ink); transition:border-color .15s, background .15s;
+  }
+  .field input:focus, .field select:focus{ outline:none; border-color:var(--orange); background:var(--white); }
+  .pin-row input{ text-align:center; font-size:20px; font-weight:700; letter-spacing:0.15em; padding:12px 0; }
+
+  .btn-primary{
+    width:100%; padding:13px; border:none; border-radius:12px;
+    background:linear-gradient(155deg, var(--orange), var(--orange-deep));
+    color:var(--white); font-weight:700; font-size:14.5px;
+    box-shadow:0 12px 24px -12px rgba(217,96,10,0.6); transition:transform .12s, box-shadow .12s;
+  }
+  .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 16px 28px -12px rgba(217,96,10,0.65); }
+  .btn-primary:active{ transform:translateY(0); }
+
+  .login-foot{ margin-top:18px; text-align:center; font-size:12px; color:var(--ink-soft); }
+  .error-msg{
+    display:none; background:#FBE7E1; border:1px solid #F2C4B6; color:var(--bad);
+    font-size:12.5px; font-weight:600; padding:10px 12px; border-radius:10px; margin-bottom:16px;
+  }
+
+  /* ===================== FORM SETORAN VIEW ===================== */
+  .page-head{ margin-bottom:22px; }
+  .page-head .eyebrow{ font-size:12px; font-weight:700; color:var(--orange-deep); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+  .page-head h1{ font-size:26px; font-weight:700; }
+  .page-head .desc{ font-size:13.5px; color:var(--ink-soft); margin-top:6px; }
+
+  .panel h3{ font-size:15px; font-weight:700; margin-bottom:4px; }
+  .panel .panel-sub{ font-size:12.5px; color:var(--ink-soft); margin-bottom:18px; }
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:520px){ .grid-2{ grid-template-columns:1fr; } .row{ grid-template-columns:28px 1fr 92px; gap:10px; } .rank{ font-size:16px; } .amount .rp{ font-size:13px; } }
+
+  .amount-input{ position:relative; }
+  .amount-input span{ position:absolute; left:14px; top:50%; transform:translateY(-50%); font-weight:700; color:var(--ink-soft); font-size:14px; }
+  .amount-input input{ padding-left:40px; font-weight:700; font-size:16px; }
+
+  .upload-box{
+    border:1.5px dashed var(--line); border-radius:14px; background:var(--cream);
+    padding:22px; text-align:center; cursor:pointer; transition:border-color .15s, background .15s; display:block;
+  }
+  .upload-box:hover{ border-color:var(--orange); background:var(--cream-2); }
+  .upload-box .icon{ font-size:24px; margin-bottom:6px; }
+  .upload-box .main-txt{ font-size:13.5px; font-weight:700; }
+  .upload-box .sub-txt{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .upload-box input[type=file]{ display:none; }
+  .file-chip{
+    display:none; align-items:center; gap:8px; background:var(--cream-2); border:1px solid var(--line);
+    border-radius:10px; padding:8px 12px; font-size:12.5px; font-weight:600; margin-top:10px;
+  }
+
+  textarea{
+    width:100%; padding:12px 14px; border-radius:11px; border:1.5px solid var(--line);
+    background:var(--cream); font-size:13.5px; resize:vertical; min-height:70px;
+  }
+  textarea:focus{ outline:none; border-color:var(--orange); background:var(--white); }
+
+  .summary-row{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; font-size:13.5px; border-bottom:1px solid var(--line); }
+  .summary-row:last-child{ border-bottom:none; }
+  .summary-row .k{ color:var(--ink-soft); }
+  .summary-row .v{ font-weight:700; }
+
+  .actions{ display:flex; gap:10px; }
+  .btn-secondary{
+    flex:0 0 auto; padding:13px 18px; border-radius:12px; border:1.5px solid var(--line);
+    background:var(--white); color:var(--ink); font-weight:700; font-size:14px;
+  }
+  .actions .btn-primary{ flex:1; }
+
+  .pengurus-note{
+    display:flex; gap:12px; background:var(--cream-2); border:1px solid var(--line);
+    border-radius:16px; padding:18px; font-size:13px; color:var(--ink-soft); line-height:1.5;
+  }
+
+  /* ===================== DASHBOARD PENGURUS ===================== */
+  .mini-stats{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+  .mini-stat{
+    flex:1; min-width:140px; background:var(--cream); border:1px solid var(--line);
+    border-radius:14px; padding:14px 16px;
+  }
+  .mini-stat .num{ font-family:'Fraunces', serif; font-size:22px; font-weight:700; }
+  .mini-stat .label{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .mini-stat.alert .num{ color:var(--bad); }
+
+  .filter-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .filter-tab{
+    padding:8px 14px; border-radius:999px; border:1.5px solid var(--line);
+    background:var(--white); font-size:12.5px; font-weight:700; color:var(--ink-soft);
+  }
+  .filter-tab.active{ border-color:var(--orange); background:var(--orange); color:var(--white); }
+
+  .setoran-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .setoran-table th{
+    text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--ink-soft); padding:8px 10px; border-bottom:2px solid var(--line);
+  }
+  .setoran-table td{ padding:11px 10px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  .setoran-table tr:last-child td{ border-bottom:none; }
+  .cell-entitas{ font-weight:700; }
+  .cell-sub{ font-size:11.5px; color:var(--ink-soft); }
+  .cell-rp{ font-weight:800; white-space:nowrap; }
+
+  .status-badge{
+    display:inline-block; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px;
+  }
+  .status-badge.belum{ background:#FBEFDD; color:#B5720B; }
+  .status-badge.ok{ background:#E4F3E8; color:var(--good); }
+  .status-badge.tolak{ background:#FBE7E1; color:var(--bad); }
+
+  .row-actions{ display:flex; gap:6px; }
+  .btn-mini{
+    padding:6px 12px; border-radius:8px; border:1.5px solid var(--line);
+    background:var(--white); font-size:11.5px; font-weight:700; white-space:nowrap;
+  }
+  .btn-mini.approve{ border-color:var(--good); color:var(--good); }
+  .btn-mini.approve:hover{ background:var(--good); color:var(--white); }
+  .btn-mini.reject{ border-color:var(--bad); color:var(--bad); }
+  .btn-mini.reject:hover{ background:var(--bad); color:var(--white); }
+
+  .table-empty{ text-align:center; padding:30px; color:var(--ink-soft); font-size:13px; }
+  .table-wrap{ overflow-x:auto; }
+  .btn-export{
+    padding:9px 16px; border-radius:10px; border:1.5px solid var(--line);
+    background:var(--white); font-weight:700; font-size:12.5px; color:var(--ink);
+  }
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:var(--white); padding:14px 22px; border-radius:12px;
+    font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:10px;
+    opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;
+    box-shadow:0 20px 40px -16px rgba(0,0,0,0.4); z-index:50;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+  .toast .dot{ width:8px; height:8px; border-radius:50%; background:var(--good); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="mark">🪙</span> Ihsan Kolektor</div>
+  <button class="btn-login" id="loginBtn" onclick="goTo('loginView')">🔐 Masuk Fundraiser / Pengurus</button>
+  <div class="who" id="whoBar">
+    <div class="avatar" id="avatarInit">–</div>
+    <div class="meta">
+      <div class="name" id="whoName">–</div>
+      <div class="role" id="whoRole">–</div>
+    </div>
+    <button onclick="logout()">Keluar</button>
+  </div>
+</div>
+
+<!-- ===================== LANDING / LEADERBOARD (default) ===================== -->
+<div class="view active" id="landingView">
+  <div id="landingHeader">
+    <div class="hero">
+      <div class="eyebrow">Transparansi Kaleng Ihsan</div>
+      <h1>Setiap koin yang masuk, tercatat dan terlihat oleh semua.</h1>
+      <div class="stat-row">
+        <div class="stat-card"><div class="num">Rp 48.250.000</div><div class="label">Total terkumpul bulan ini</div></div>
+        <div class="stat-card"><div class="num">25</div><div class="label">Ranting & AUM aktif menyetor</div></div>
+        <div class="stat-card"><div class="num">312</div><div class="label">Kaleng ihsan terdaftar</div></div>
+      </div>
+    </div>
+  </div>
+
+  <main id="landingMain">
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>Papan Perolehan Ranting</h2><div class="sub">Rekap setoran kaleng ihsan — Juli 2026</div></div>
+        <div class="updated">Diperbarui hari ini, 09:40 WIB</div>
+      </div>
+
+      <div id="leaderboardList">
+      <div class="row top1">
+        <div class="rank">1</div>
+        <div class="ranting-info">
+          <div class="ranting-name">Pekajangan Barat 2</div>
+          <div class="ranting-meta"><span class="tag-mini ranting">Ranting</span>34 kaleng aktif</div>
+          <div class="kaleng-track"><div class="kaleng-fill" style="width:100%; animation-delay:.05s;"></div></div>
+        </div>
+        <div class="amount"><div class="rp">Rp 9.850.000</div><div class="pct">100%</div></div>
+      </div>
+
+      <div class="row top2">
+        <div class="rank">2</div>
+        <div class="ranting-info">
+          <div class="ranting-name">SMA Muh 1 Pekajangan</div>
+          <div class="ranting-meta"><span class="tag-mini aum">AUM</span>29 kaleng aktif</div>
+          <div class="kaleng-track"><div class="kaleng-fill" style="width:87%; animation-delay:.1s;"></div></div>
+        </div>
+        <div class="amount"><div class="rp">Rp 8.560.000</div><div class="pct">87%</div></div>
+      </div>
+
+      <div class="row top3">
+        <div class="rank">3</div>
+        <div class="ranting-info">
+          <div class="ranting-name">Pekajangan Timur 1</div>
+          <div class="ranting-meta"><span class="tag-mini ranting">Ranting</span>26 kaleng aktif</div>
+          <div class="kaleng-track"><div class="kaleng-fill" style="width:74%; animation-delay:.15s;"></div></div>
+        </div>
+        <div class="amount"><div class="rp">Rp 7.290.000</div><div class="pct">74%</div></div>
+      </div>
+
+      <div class="row">
+        <div class="rank">4</div>
+        <div class="ranting-info">
+          <div class="ranting-name">SDM 1 Pekajangan</div>
+          <div class="ranting-meta"><span class="tag-mini aum">AUM</span>24 kaleng aktif</div>
+          <div class="kaleng-track"><div class="kaleng-fill" style="width:62%; animation-delay:.2s;"></div></div>
+        </div>
+        <div class="amount"><div class="rp">Rp 6.110.000</div><div class="pct">62%</div></div>
+      </div>
+
+      <div class="row">
+        <div class="rank">5</div>
+        <div class="ranting-info">
+          <div class="ranting-name">Ambokembang</div>
+          <div class="ranting-meta"><span class="tag-mini ranting">Ranting</span>21 kaleng aktif</div>
+          <div class="kaleng-track"><div class="kaleng-fill" style="width:51%; animation-delay:.25s;"></div></div>
+        </div>
+        <div class="amount"><div class="rp">Rp 5.020.000</div><div class="pct">51%</div></div>
+      </div>
+
+      <div class="row">
+        <div class="rank">6</div>
+        <div class="ranting-info">
+          <div class="ranting-name">Tangkil Kulon</div>
+          <div class="ranting-meta"><span class="tag-mini ranting">Ranting</span>18 kaleng aktif</div>
+          <div class="kaleng-track"><div class="kaleng-fill" style="width:38%; animation-delay:.3s;"></div></div>
+        </div>
+        <div class="amount"><div class="rp">Rp 3.740.000</div><div class="pct">38%</div></div>
+      </div>
+
+      <div class="row">
+        <div class="rank">7</div>
+        <div class="ranting-info">
+          <div class="ranting-name">SMPM Pekajangan</div>
+          <div class="ranting-meta"><span class="tag-mini aum">AUM</span>15 kaleng aktif</div>
+          <div class="kaleng-track"><div class="kaleng-fill" style="width:29%; animation-delay:.35s;"></div></div>
+        </div>
+        <div class="amount"><div class="rp">Rp 2.850.000</div><div class="pct">29%</div></div>
+      </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span>ℹ️</span>
+      <div><b>Tentang halaman ini.</b> Angka yang ditampilkan adalah rekap agregat per ranting untuk menjaga privasi pemilik kaleng individu. Petugas dan pengurus dapat masuk lewat tombol di pojok kanan atas untuk mencatat atau memverifikasi setoran.</div>
+    </div>
+  </main>
+
+  <footer>Dikelola oleh <span class="brand-foot">Lazismu Pekalongan</span> · Data tersinkron dari Google Sheets</footer>
+</div>
+
+<!-- ===================== LOGIN VIEW ===================== -->
+<div class="view" id="loginView">
+  <div class="login-card">
+    <button class="back-link" onclick="goTo('landingView')">← Kembali ke beranda</button>
+    <div class="login-mark">🔐</div>
+    <div class="eyebrow">Akses Fundraiser & Pengurus</div>
+    <h1>Masuk ke akun Anda</h1>
+    <div class="desc">Pilih peran Anda, lalu gunakan nama akun dan PIN yang diberikan koordinator Lazis.</div>
+
+    <div class="error-msg" id="errorMsg">Lengkapi nama akun dan PIN dengan benar.</div>
+
+    <div class="role-toggle">
+      <button class="role-btn active" id="roleBtnPetugas" onclick="setRole('fundraiser')">🧾 Fundraiser</button>
+      <button class="role-btn" id="roleBtnPengurus" onclick="setRole('pengurus')">📋 Pengurus Lazis</button>
+    </div>
+
+    <div class="field">
+      <label for="usernameInput">Nama Akun</label>
+      <input type="text" id="usernameInput" placeholder="Contoh: Fundraiser 1">
+    </div>
+
+    <div class="field">
+      <label for="pinInput">PIN (4 digit)</label>
+      <div class="pin-row"><input type="password" id="pinInput" maxlength="4" inputmode="numeric" placeholder="••••"></div>
+    </div>
+
+    <button class="btn-primary" onclick="doLogin()">Masuk</button>
+    <div class="login-foot">Lupa PIN? Hubungi koordinator Lazis.</div>
+  </div>
+</div>
+
+<!-- ===================== FORM SETORAN VIEW (fundraiser) ===================== -->
+<div class="view" id="formView">
+  <main>
+    <div class="page-head">
+      <div class="eyebrow">Input Setoran</div>
+      <h1>Catat Setoran Kaleng Ihsan</h1>
+      <div class="desc">Data akan langsung tersimpan ke rekap ranting/AUM dan terlihat oleh pengurus Lazis.</div>
+    </div>
+
+    <div class="panel">
+      <h3>Detail Kaleng</h3>
+      <div class="panel-sub">Pilih ranting/AUM lalu kaleng yang menyetor hari ini.</div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="formEntitasSelect">Ranting / AUM</label>
+          <select id="formEntitasSelect" onchange="onEntitasChange()">
+            <option value="">Pilih ranting/AUM</option>
+            <optgroup label="Ranting">
+              <option value="Ambokembang">Ambokembang</option>
+              <option value="Pangkah">Pangkah</option>
+              <option value="Tangkil Tengah">Tangkil Tengah</option>
+              <option value="Tangkil Kulon">Tangkil Kulon</option>
+              <option value="Karanglo">Karanglo</option>
+              <option value="Karangdowo">Karangdowo</option>
+              <option value="Podo">Podo</option>
+              <option value="Rengas">Rengas</option>
+              <option value="Pekajangan Barat 1">Pekajangan Barat 1</option>
+              <option value="Pekajangan Barat 2">Pekajangan Barat 2</option>
+              <option value="Pekajangan Barat 3">Pekajangan Barat 3</option>
+              <option value="Pekajangan Barat 4">Pekajangan Barat 4</option>
+              <option value="Pekajangan Timur 1">Pekajangan Timur 1</option>
+              <option value="Pekajangan Timur 2">Pekajangan Timur 2</option>
+              <option value="Pekajangan Timur 3">Pekajangan Timur 3</option>
+              <option value="Pekajangan Timur 4">Pekajangan Timur 4</option>
+            </optgroup>
+            <optgroup label="AUM (Sekolah)">
+              <option value="SDM Ambokembang">SDM Ambokembang</option>
+              <option value="SDM 1 Pekajangan">SDM 1 Pekajangan</option>
+              <option value="SDM 2 Pekajangan">SDM 2 Pekajangan</option>
+              <option value="SDM 3 Pekajangan">SDM 3 Pekajangan</option>
+              <option value="SDM 4 Pekajangan">SDM 4 Pekajangan</option>
+              <option value="SDM Tangkil Tengah">SDM Tangkil Tengah</option>
+              <option value="SDM Pangkah">SDM Pangkah</option>
+              <option value="SMPM Pekajangan">SMPM Pekajangan</option>
+              <option value="SMA Muh 1 Pekajangan">SMA Muh 1 Pekajangan</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field">
+          <label for="kalengSelect">Kaleng / Pemilik</label>
+          <select id="kalengSelect" onchange="updateKalengMeta()">
+            <option value="">Pilih ranting/AUM dulu</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="kalengMetaWrap" style="display:none;">
+        <label>Alamat Kaleng</label><input type="text" id="kalengMeta" disabled>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Jumlah Setoran</h3>
+      <div class="panel-sub">Masukkan nominal hasil hitungan kaleng.</div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="jumlahRp">Nominal Setoran</label>
+          <div class="amount-input"><span>Rp</span><input type="number" id="jumlahRp" placeholder="0" min="0"></div>
+        </div>
+        <div class="field"><label for="tglSetor">Tanggal Setoran</label><input type="date" id="tglSetor"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Bukti Setoran</h3>
+      <div class="panel-sub">Unggah foto uang atau kaleng sebagai bukti (opsional, disarankan).</div>
+      <label class="upload-box" id="uploadBox">
+        <div class="icon">📷</div>
+        <div class="main-txt">Ketuk untuk unggah foto</div>
+        <div class="sub-txt">JPG/PNG, maks 5MB</div>
+        <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this)">
+      </label>
+      <div class="file-chip" id="fileChip"><span>✅</span><span id="fileName"></span></div>
+      <div class="field" style="margin-top:16px; margin-bottom:0;">
+        <label for="ket">Keterangan (opsional)</label>
+        <textarea id="ket" placeholder="Contoh: kaleng sudah 2 bulan tidak diambil"></textarea>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Ringkasan</h3>
+      <div class="summary-row"><span class="k">Ranting</span><span class="v" id="sumRanting">–</span></div>
+      <div class="summary-row"><span class="k">Kaleng</span><span class="v" id="sumKaleng">–</span></div>
+      <div class="summary-row"><span class="k">Nominal</span><span class="v" id="sumJumlah">Rp 0</span></div>
+      <div class="summary-row"><span class="k">Petugas input</span><span class="v" id="sumPetugas">–</span></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-secondary" onclick="resetForm()">Bersihkan</button>
+      <button class="btn-primary" onclick="submitSetoran()">Simpan Setoran</button>
+    </div>
+  </main>
+</div>
+
+<!-- ===================== DASHBOARD PENGURUS ===================== -->
+<div class="view" id="pengurusView">
+  <main>
+    <div class="page-head">
+      <div class="eyebrow">Dashboard Pengurus</div>
+      <h1>Rekap & Verifikasi Setoran</h1>
+      <div class="desc">Pantau perolehan semua ranting/AUM dan verifikasi setoran yang masuk.</div>
+    </div>
+
+    <div class="mini-stats" id="pengurusStats">
+      <div class="mini-stat"><div class="num" id="pgTotal">Rp 0</div><div class="label">Total terkumpul bulan ini</div></div>
+      <div class="mini-stat"><div class="num" id="pgEntitas">0</div><div class="label">Ranting & AUM aktif</div></div>
+      <div class="mini-stat alert"><div class="num" id="pgBelum">0</div><div class="label">Setoran belum diverifikasi</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>Papan Perolehan (semua entitas)</h2><div class="sub">Diurutkan dari total tertinggi</div></div>
+        <div class="updated" id="pgUpdated">Memuat…</div>
+      </div>
+      <div id="pengurusLeaderboard"><div class="table-empty">Memuat data…</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>Daftar Setoran</h2><div class="sub">Verifikasi setoran yang dicatat petugas ranting/AUM</div></div>
+        <button class="btn-export" onclick="exportSetoranCSV()">⬇ Export CSV</button>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-status="Belum diverifikasi" onclick="setStatusFilter('Belum diverifikasi', this)">Belum diverifikasi</button>
+        <button class="filter-tab" data-status="Terverifikasi" onclick="setStatusFilter('Terverifikasi', this)">Terverifikasi</button>
+        <button class="filter-tab" data-status="Ditolak" onclick="setStatusFilter('Ditolak', this)">Ditolak</button>
+        <button class="filter-tab" data-status="Semua" onclick="setStatusFilter('Semua', this)">Semua</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="setoran-table">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Entitas</th>
+              <th>Kaleng</th>
+              <th>Nominal</th>
+              <th>Petugas</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="setoranTableBody">
+            <tr><td colspan="7" class="table-empty">Memuat data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastMsg">Setoran berhasil disimpan</span></div>
+
+<script>
+  // TEMPEL URL WEB APP GOOGLE APPS SCRIPT DI SINI SETELAH DEPLOY (lihat Code.gs)
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxRWGtfjbFHRsS1wFRL4-HPMxLjkjSiaOzc1wnVmMtCMH-z2pcCPgumf7XfQOsXREUZ/exec';
+
+  let currentUser = null;
+  let selectedRole = 'fundraiser';
+
+  function goTo(viewId){
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  function setRole(role){
+    selectedRole = role;
+    document.getElementById('roleBtnPetugas').classList.toggle('active', role === 'fundraiser');
+    document.getElementById('roleBtnPengurus').classList.toggle('active', role === 'pengurus');
+  }
+
+  async function doLogin(){
+    const username = document.getElementById('usernameInput').value.trim();
+    const pin = document.getElementById('pinInput').value;
+    const errorMsg = document.getElementById('errorMsg');
+
+    if(!username || pin.length !== 4){
+      errorMsg.textContent = 'Lengkapi nama akun dan PIN 4 digit dengan benar.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    const loginBtnCard = document.querySelector('.login-card .btn-primary');
+    loginBtnCard.textContent = 'Memeriksa…';
+
+    try {
+      const res = await postToBackend({ action:'login', username:username, pin:pin, role:selectedRole });
+      loginBtnCard.textContent = 'Masuk';
+
+      if(!res.success){
+        errorMsg.textContent = res.message || 'Nama akun, peran, atau PIN salah.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+      errorMsg.style.display = 'none';
+
+      currentUser = { username: username, role: selectedRole, nama: username };
+
+      document.getElementById('loginBtn').style.display = 'none';
+      document.getElementById('whoBar').style.display = 'flex';
+      document.getElementById('whoName').textContent = currentUser.nama;
+      document.getElementById('whoRole').textContent = selectedRole === 'pengurus' ? 'Pengurus Lazis' : 'Fundraiser';
+      document.getElementById('avatarInit').textContent = currentUser.nama.charAt(0);
+
+      if(selectedRole === 'pengurus'){
+        goTo('pengurusView');
+        loadPengurusDashboard();
+      } else {
+        document.getElementById('sumPetugas').textContent = currentUser.nama;
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('tglSetor').value = today;
+        goTo('formView');
+      }
+
+      document.getElementById('pinInput').value = '';
+    } catch(err){
+      loginBtnCard.textContent = 'Masuk';
+      errorMsg.textContent = 'Gagal menghubungi server. Cek koneksi atau URL Web App.';
+      errorMsg.style.display = 'block';
+    }
+  }
+
+  /** Dipanggil saat fundraiser memilih ranting/AUM di form setoran. */
+  function onEntitasChange(){
+    const entitas = document.getElementById('formEntitasSelect').value;
+    document.getElementById('sumRanting').textContent = entitas || '–';
+    if(entitas){
+      loadKalengOptions(entitas);
+    } else {
+      document.getElementById('kalengSelect').innerHTML = '<option value="">Pilih ranting/AUM dulu</option>';
+    }
+  }
+
+  function currentKategori(){
+    const select = document.getElementById('formEntitasSelect');
+    const opt = select.options[select.selectedIndex];
+    if(!opt || !opt.parentElement) return '';
+    return opt.parentElement.label === 'AUM (Sekolah)' ? 'AUM' : 'Ranting';
+  }
+
+  /** Isi ulang dropdown kaleng dari Data_Munfiq sesuai entitas yang login. */
+  async function loadKalengOptions(entitas){
+    const select = document.getElementById('kalengSelect');
+    select.innerHTML = '<option value="">Memuat kaleng…</option>';
+    try {
+      const url = `${WEB_APP_URL}?action=getKalengByEntitas&entitas=${encodeURIComponent(entitas)}`;
+      const res = await fetch(url).then(r => r.json());
+      select.innerHTML = '<option value="">Pilih kaleng</option>';
+      (res.kaleng || []).forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = `${k.id_kaleng}|${k.nama_munfiq}|${k.alamat || ''}`;
+        opt.textContent = `${k.id_kaleng} — ${k.nama_munfiq}`;
+        select.appendChild(opt);
+      });
+    } catch(err){
+      select.innerHTML = '<option value="">Gagal memuat kaleng</option>';
+    }
+  }
+
+  /** Muat leaderboard publik dari Rekap_Bulan_Ini saat halaman dibuka. */
+  async function loadLeaderboard(){
+    if(WEB_APP_URL.includes('PASTE_URL')) return; // belum di-deploy, tetap pakai data contoh
+    try {
+      const url = `${WEB_APP_URL}?action=getLeaderboard`;
+      const res = await fetch(url).then(r => r.json());
+      if(!res.success) return;
+      renderLeaderboard(res.leaderboard, res.total_terkumpul, res.total_kaleng_aktif, res.entitas_aktif);
+    } catch(err){
+      console.error('Gagal memuat leaderboard', err);
+    }
+  }
+
+  function renderLeaderboard(rows, totalTerkumpul, totalKaleng, entitasAktif){
+    const list = document.getElementById('leaderboardList');
+    if(!list || !rows || !rows.length) return;
+
+    document.querySelectorAll('.stat-card .num')[0].textContent = 'Rp ' + Number(totalTerkumpul).toLocaleString('id-ID');
+    document.querySelectorAll('.stat-card .num')[1].textContent = entitasAktif;
+    document.querySelectorAll('.stat-card .num')[2].textContent = totalKaleng;
+
+    const max = Math.max(...rows.map(r => Number(r.total_setoran_bulan_ini) || 0), 1);
+    list.innerHTML = rows.map((r, i) => {
+      const pct = Math.round((Number(r.total_setoran_bulan_ini) || 0) / max * 100);
+      const topClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+      const tagClass = r.kategori === 'AUM' ? 'aum' : 'ranting';
+      return `
+        <div class="row ${topClass}">
+          <div class="rank">${i + 1}</div>
+          <div class="ranting-info">
+            <div class="ranting-name">${r.nama_entitas}</div>
+            <div class="ranting-meta"><span class="tag-mini ${tagClass}">${r.kategori || 'Ranting'}</span>${r.jumlah_kaleng_aktif || 0} kaleng aktif</div>
+            <div class="kaleng-track"><div class="kaleng-fill" style="width:${pct}%;"></div></div>
+          </div>
+          <div class="amount">
+            <div class="rp">Rp ${Number(r.total_setoran_bulan_ini || 0).toLocaleString('id-ID')}</div>
+            <div class="pct">${pct}%</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /** Kirim POST ke Apps Script. Pakai text/plain agar tidak kena CORS preflight. */
+  function postToBackend(payload){
+    return fetch(WEB_APP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(r => r.json());
+  }
+
+  window.addEventListener('DOMContentLoaded', loadLeaderboard);
+
+  // ===================== DASHBOARD PENGURUS =====================
+  let statusFilter = 'Belum diverifikasi';
+
+  function setStatusFilter(status, btn){
+    statusFilter = status;
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadSetoranTable();
+  }
+
+  async function loadPengurusDashboard(){
+    await Promise.all([loadPengurusLeaderboard(), loadSetoranTable()]);
+  }
+
+  async function loadPengurusLeaderboard(){
+    const wrap = document.getElementById('pengurusLeaderboard');
+    if(WEB_APP_URL.includes('PASTE_URL')){
+      wrap.innerHTML = '<div class="table-empty">Sambungkan WEB_APP_URL terlebih dahulu untuk melihat data live.</div>';
+      return;
+    }
+    try {
+      const res = await fetch(`${WEB_APP_URL}?action=getLeaderboard`).then(r => r.json());
+      if(!res.success || !res.leaderboard.length){
+        wrap.innerHTML = '<div class="table-empty">Belum ada data rekap bulan ini.</div>';
+        return;
+      }
+      document.getElementById('pgTotal').textContent = 'Rp ' + Number(res.total_terkumpul).toLocaleString('id-ID');
+      document.getElementById('pgEntitas').textContent = res.entitas_aktif;
+      document.getElementById('pgUpdated').textContent = 'Diperbarui otomatis dari Rekap_Bulan_Ini';
+
+      const max = Math.max(...res.leaderboard.map(r => Number(r.total_setoran_bulan_ini) || 0), 1);
+      wrap.innerHTML = res.leaderboard.map((r, i) => {
+        const pct = Math.round((Number(r.total_setoran_bulan_ini) || 0) / max * 100);
+        const tagClass = r.kategori === 'AUM' ? 'aum' : 'ranting';
+        return `
+          <div class="row">
+            <div class="rank">${i + 1}</div>
+            <div class="ranting-info">
+              <div class="ranting-name">${r.nama_entitas}</div>
+              <div class="ranting-meta"><span class="tag-mini ${tagClass}">${r.kategori || 'Ranting'}</span>${r.jumlah_kaleng_aktif || 0} kaleng aktif</div>
+              <div class="kaleng-track"><div class="kaleng-fill" style="width:${pct}%;"></div></div>
+            </div>
+            <div class="amount">
+              <div class="rp">Rp ${Number(r.total_setoran_bulan_ini || 0).toLocaleString('id-ID')}</div>
+              <div class="pct">${pct}%</div>
+            </div>
+          </div>`;
+      }).join('');
+    } catch(err){
+      wrap.innerHTML = '<div class="table-empty">Gagal memuat rekap. Cek koneksi atau URL Web App.</div>';
+    }
+  }
+
+  let lastSetoranData = [];
+
+  async function loadSetoranTable(){
+    const tbody = document.getElementById('setoranTableBody');
+    if(WEB_APP_URL.includes('PASTE_URL')){
+      tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Sambungkan WEB_APP_URL terlebih dahulu.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Memuat data…</td></tr>';
+    try {
+      const url = `${WEB_APP_URL}?action=getSetoranList&status=${encodeURIComponent(statusFilter)}`;
+      const res = await fetch(url).then(r => r.json());
+      if(!res.success){
+        tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Gagal memuat data.</td></tr>';
+        return;
+      }
+      lastSetoranData = res.setoran || [];
+      document.getElementById('pgBelum').textContent = res.jumlah_belum_verifikasi || 0;
+
+      if(!lastSetoranData.length){
+        tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Tidak ada setoran untuk filter ini.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = lastSetoranData.map(s => {
+        const badgeClass = s.status_verifikasi === 'Terverifikasi' ? 'ok' : s.status_verifikasi === 'Ditolak' ? 'tolak' : 'belum';
+        const tglTampil = s.tanggal ? new Date(s.tanggal).toLocaleDateString('id-ID') : '-';
+        const actions = s.status_verifikasi === 'Belum diverifikasi'
+          ? `<div class="row-actions">
+               <button class="btn-mini approve" onclick="verifySetoran('${s.id_setoran}','Terverifikasi')">✓ Verifikasi</button>
+               <button class="btn-mini reject" onclick="verifySetoran('${s.id_setoran}','Ditolak')">✕ Tolak</button>
+             </div>`
+          : `<span class="cell-sub">—</span>`;
+        return `
+          <tr>
+            <td>${tglTampil}</td>
+            <td><div class="cell-entitas">${s.entitas}</div><div class="cell-sub">${s.kategori || ''}</div></td>
+            <td>${s.id_kaleng}<div class="cell-sub">${s.nama_munfiq || ''}</div></td>
+            <td class="cell-rp">Rp ${Number(s.jumlah || 0).toLocaleString('id-ID')}</td>
+            <td>${s.petugas || '-'}</td>
+            <td><span class="status-badge ${badgeClass}">${s.status_verifikasi}</span></td>
+            <td>${actions}</td>
+          </tr>`;
+      }).join('');
+    } catch(err){
+      tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Gagal menghubungi server.</td></tr>';
+    }
+  }
+
+  async function verifySetoran(id_setoran, status_baru){
+    try {
+      const res = await postToBackend({
+        action: 'verifySetoran',
+        id_setoran: id_setoran,
+        status_baru: status_baru,
+        verifikator: currentUser ? currentUser.nama : ''
+      });
+      if(!res.success){
+        showToast(res.message || 'Gagal memperbarui status', false);
+        return;
+      }
+      showToast(status_baru === 'Terverifikasi' ? 'Setoran diverifikasi' : 'Setoran ditolak', status_baru === 'Terverifikasi');
+      loadSetoranTable();
+      loadPengurusLeaderboard();
+    } catch(err){
+      showToast('Gagal menghubungi server', false);
+    }
+  }
+
+  function exportSetoranCSV(){
+    if(!lastSetoranData.length){
+      showToast('Tidak ada data untuk diekspor', false);
+      return;
+    }
+    const headers = ['id_setoran','tanggal','entitas','kategori','id_kaleng','nama_munfiq','jumlah','petugas','keterangan','status_verifikasi'];
+    const csvRows = [headers.join(',')];
+    lastSetoranData.forEach(s => {
+      const row = headers.map(h => `"${String(s[h] ?? '').replace(/"/g,'""')}"`);
+      csvRows.push(row.join(','));
+    });
+    const blob = new Blob([csvRows.join('\n')], { type:'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `setoran_ihsan_kolektor_${statusFilter.replace(/\s+/g,'_')}.csv`;
+    link.click();
+  }
+
+  function logout(){
+    currentUser = null;
+    document.getElementById('loginBtn').style.display = 'flex';
+    document.getElementById('whoBar').style.display = 'none';
+    document.getElementById('usernameInput').value = '';
+    resetForm();
+    goTo('landingView');
+  }
+
+  function updateKalengMeta(){
+    const val = document.getElementById('kalengSelect').value;
+    const metaWrap = document.getElementById('kalengMetaWrap');
+    if(!val){ metaWrap.style.display = 'none'; document.getElementById('sumKaleng').textContent = '–'; return; }
+    const [kode, nama, alamat] = val.split('|');
+    document.getElementById('kalengMeta').value = alamat;
+    metaWrap.style.display = 'block';
+    document.getElementById('sumKaleng').textContent = kode + ' — ' + nama;
+  }
+
+  document.getElementById('jumlahRp').addEventListener('input', function(){
+    const v = parseInt(this.value || 0, 10);
+    document.getElementById('sumJumlah').textContent = 'Rp ' + v.toLocaleString('id-ID');
+  });
+
+  function handleFile(input){
+    if(input.files && input.files[0]){
+      document.getElementById('fileChip').style.display = 'flex';
+      document.getElementById('fileName').textContent = input.files[0].name;
+    }
+  }
+
+  function resetForm(){
+    const entitasSelect = document.getElementById('formEntitasSelect');
+    if(entitasSelect) entitasSelect.value = '';
+    const kalengSelect = document.getElementById('kalengSelect');
+    if(kalengSelect) kalengSelect.innerHTML = '<option value="">Pilih ranting/AUM dulu</option>';
+    const jumlahRp = document.getElementById('jumlahRp');
+    if(jumlahRp) jumlahRp.value = '';
+    const ket = document.getElementById('ket');
+    if(ket) ket.value = '';
+    document.getElementById('fileChip').style.display = 'none';
+    document.getElementById('kalengMetaWrap').style.display = 'none';
+    document.getElementById('sumRanting').textContent = '–';
+    document.getElementById('sumKaleng').textContent = '–';
+    document.getElementById('sumJumlah').textContent = 'Rp 0';
+  }
+
+  async function submitSetoran(){
+    const entitas = document.getElementById('formEntitasSelect').value;
+    const kalengVal = document.getElementById('kalengSelect').value;
+    const jumlah = document.getElementById('jumlahRp').value;
+    if(!entitas || !kalengVal || !jumlah){
+      showToast('Lengkapi ranting/AUM, kaleng, dan nominal terlebih dahulu', false);
+      return;
+    }
+
+    const [id_kaleng, nama_munfiq] = kalengVal.split('|');
+    const payload = {
+      action: 'submitSetoran',
+      entitas: entitas,
+      kategori: currentKategori(),
+      id_kaleng: id_kaleng,
+      nama_munfiq: nama_munfiq,
+      jumlah: jumlah,
+      tanggal: document.getElementById('tglSetor').value,
+      petugas: currentUser ? currentUser.nama : '',
+      keterangan: document.getElementById('ket').value,
+      bukti_url: '' // upload bukti ke Drive bisa ditambahkan di iterasi berikutnya
+    };
+
+    const submitBtn = document.querySelector('#formView .btn-primary');
+    submitBtn.textContent = 'Menyimpan…';
+
+    try {
+      const res = await postToBackend(payload);
+      submitBtn.textContent = 'Simpan Setoran';
+      if(!res.success){
+        showToast(res.message || 'Gagal menyimpan setoran', false);
+        return;
+      }
+      showToast('Setoran berhasil disimpan', true);
+      setTimeout(resetForm, 900);
+      loadLeaderboard();
+    } catch(err){
+      submitBtn.textContent = 'Simpan Setoran';
+      showToast('Gagal menghubungi server. Cek koneksi atau URL Web App.', false);
+    }
+  }
+
+  function showToast(msg, success){
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.querySelector('.dot').style.background = success ? '#3E8F5C' : '#C4432B';
+    toast.classList.add('show');
+    setTimeout(()=> toast.classList.remove('show'), 2400);
+  }
+
+  document.getElementById('pinInput').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') doLogin();
+  });
+</script>
+
+</body>
+</html>
