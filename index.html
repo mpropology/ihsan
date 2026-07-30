@@ -716,12 +716,12 @@
     document.getElementById('roleBtnPengurus').classList.toggle('active', role === 'pengurus');
   }
 
-  async function doLogin(){
+ async function doLogin(){
     const username = document.getElementById('usernameInput').value.trim();
     const password = document.getElementById('passwordInput').value;
     const errorMsg = document.getElementById('errorMsg');
 
-    // Validasi diubah: yang penting password tidak kosong
+    // Cek jika password kosong
     if(!username || password.trim() === ''){
       errorMsg.textContent = 'Lengkapi nama akun dan password dengan benar.';
       errorMsg.style.display = 'block';
@@ -732,9 +732,11 @@
     loginBtnCard.textContent = 'Memeriksa…';
 
     try {
+      // Pastikan kata kunci pengiriman diubah menjadi 'password'
       const res = await postToBackend({ action:'login', username:username, password:password, role:selectedRole });
       loginBtnCard.textContent = 'Masuk';
-
+      
+      // ... (sisa kode di dalam try/catch tetap sama)
       if(!res.success){
         errorMsg.textContent = res.message || 'Nama akun, peran, atau PIN salah.';
         errorMsg.style.display = 'block';
