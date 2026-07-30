@@ -524,9 +524,9 @@
       <input type="text" id="usernameInput" placeholder="Contoh: Fundraiser 1">
     </div>
 
-    <div class="field">
-      <label for="pinInput">PIN (4 digit)</label>
-      <div class="pin-row"><input type="password" id="pinInput" maxlength="4" inputmode="numeric" placeholder="••••"></div>
+   <div class="field">
+      <label for="passwordInput">Password</label>
+      <input type="password" id="passwordInput" placeholder="Masukkan password">
     </div>
 
     <button class="btn-primary" onclick="doLogin()">Masuk</button>
@@ -718,11 +718,12 @@
 
   async function doLogin(){
     const username = document.getElementById('usernameInput').value.trim();
-    const pin = document.getElementById('pinInput').value;
+    const password = document.getElementById('passwordInput').value;
     const errorMsg = document.getElementById('errorMsg');
 
-    if(!username || pin.length !== 4){
-      errorMsg.textContent = 'Lengkapi nama akun dan PIN 4 digit dengan benar.';
+    // Validasi diubah: yang penting password tidak kosong
+    if(!username || password.trim() === ''){
+      errorMsg.textContent = 'Lengkapi nama akun dan password dengan benar.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -731,7 +732,7 @@
     loginBtnCard.textContent = 'Memeriksa…';
 
     try {
-      const res = await postToBackend({ action:'login', username:username, pin:pin, role:selectedRole });
+      const res = await postToBackend({ action:'login', username:username, password:password, role:selectedRole });
       loginBtnCard.textContent = 'Masuk';
 
       if(!res.success){
@@ -759,7 +760,7 @@
         goTo('formView');
       }
 
-      document.getElementById('pinInput').value = '';
+      document.getElementById('passwordInput').value = '';
     } catch(err){
       loginBtnCard.textContent = 'Masuk';
       errorMsg.textContent = 'Gagal menghubungi server. Cek koneksi atau URL Web App.';
@@ -1094,7 +1095,7 @@
     setTimeout(()=> toast.classList.remove('show'), 2400);
   }
 
-  document.getElementById('pinInput').addEventListener('keypress', function(e){
+  document.getElementById('passwordInput').addEventListener('keypress', function(e){
     if(e.key === 'Enter') doLogin();
   });
 </script>
