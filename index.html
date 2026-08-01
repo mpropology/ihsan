@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ihsan Kolektor — Lazismu Pekalongan</title>
+<title>Ihsan Kolektor — Lazismu KL Pekajangan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -32,7 +32,26 @@
   button{ font-family:inherit; cursor:pointer; }
   input, select, textarea{ font-family:inherit; }
   .view{ display:none; }
-  .view.active{ display:block; }
+  .view.active{ display:block; animation:viewEnter .28s ease both; }
+  @keyframes viewEnter{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .view.active{ animation:none; }
+  }
+
+  /* Strip penanda "sedang di halaman apa" — dipasang di setiap halaman non-publik
+     supaya terasa seperti berpindah layar sungguhan, bukan cuma ganti isi. */
+  .mode-strip{
+    display:flex; align-items:center; gap:8px;
+    padding:10px 24px; font-size:12.5px; font-weight:700;
+    color:var(--white); letter-spacing:0.02em;
+  }
+  .mode-strip.mode-login{ background:var(--ink); }
+  .mode-strip.mode-form{ background:var(--orange-deep); }
+  .mode-strip.mode-pengurus{ background:#2f6b45; }
+  .mode-strip.mode-detail{ background:var(--orange-deep); }
 
   /* ===================== TOP BAR (shared) ===================== */
   .topbar{
@@ -165,6 +184,10 @@
   .row.top1 .rank, .row.top2 .rank, .row.top3 .rank{ color:var(--orange-deep); }
   .ranting-info{ min-width:0; }
   .ranting-name{ font-weight:700; font-size:15px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #landingMain .ranting-info{ cursor:pointer; }
+  #landingMain .ranting-name{ text-decoration:underline; text-decoration-color:transparent; transition:text-decoration-color .15s; }
+  #landingMain .row:hover .ranting-name{ text-decoration-color:var(--orange); color:var(--orange-deep); }
+  #landingMain .row:hover{ background:var(--cream); border-radius:12px; margin:0 -10px; padding:14px 10px; }
   .ranting-meta{ font-size:12px; color:var(--ink-soft); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
   .tag-mini{
     display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px;
@@ -206,10 +229,14 @@
   /* ===================== LOGIN VIEW ===================== */
   #loginView{
     min-height:calc(100vh - 65px);
-    display:flex; align-items:center; justify-content:center;
-    padding:40px 20px; position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:0; position:relative; overflow:hidden;
   }
   #loginView.active{ display:flex; }
+  .login-center-wrap{
+    flex:1; display:flex; align-items:center; justify-content:center;
+    padding:40px 20px;
+  }
   #loginView::before{
     content:""; position:absolute; top:-120px; right:-120px; width:340px; height:340px;
     border-radius:50%; background:radial-gradient(circle, rgba(242,118,12,0.14), transparent 70%);
@@ -506,6 +533,8 @@
 
 <!-- ===================== LOGIN VIEW ===================== -->
 <div class="view" id="loginView">
+  <div class="mode-strip mode-login">🔐 HALAMAN LOGIN</div>
+  <div class="login-center-wrap">
   <div class="login-card">
     <button class="back-link" onclick="goTo('landingView')">← Kembali ke beranda</button>
     <div class="login-mark">🔐</div>
@@ -533,10 +562,12 @@
     <button class="btn-primary" onclick="doLogin()">Masuk</button>
     <div class="login-foot">Lupa password? Hubungi koordinator Lazis.</div>
   </div>
+  </div>
 </div>
 
 <!-- ===================== FORM SETORAN VIEW (fundraiser) ===================== -->
 <div class="view" id="formView">
+  <div class="mode-strip mode-form">🧾 HALAMAN FUNDRAISER — INPUT SETORAN</div>
   <main>
     <div class="page-head">
       <div class="eyebrow">Input Setoran</div>
@@ -640,6 +671,7 @@
 
 <!-- ===================== DASHBOARD PENGURUS ===================== -->
 <div class="view" id="pengurusView">
+  <div class="mode-strip mode-pengurus">📋 HALAMAN PENGURUS LAZIS</div>
   <main>
     <div class="page-head">
       <div class="eyebrow">Dashboard Pengurus</div>
@@ -696,7 +728,35 @@
   </main>
 </div>
 
-<div class="toast" id="toast"><span class="dot"></span><span id="toastMsg">Setoran berhasil disimpan</span></div>
+<!-- ===================== DETAIL PENYUMBANG (klik ranting/AUM di leaderboard) ===================== -->
+<div class="view" id="detailView">
+  <div class="mode-strip mode-detail">👥 DETAIL PENYUMBANG</div>
+  <main>
+    <button class="back-link" onclick="goTo('landingView')" style="margin-bottom:16px;">← Kembali ke papan perolehan</button>
+    <div class="page-head">
+      <div class="eyebrow">Detail Penyumbang</div>
+      <h1 id="detailEntitasName">Ranting</h1>
+      <div class="desc">Daftar munfiq yang sudah menyumbang bulan ini, diurutkan dari nominal terbesar.</div>
+    </div>
+
+    <div class="mini-stats">
+      <div class="mini-stat"><div class="num" id="detailTotal">Rp 0</div><div class="label">Total terkumpul bulan ini</div></div>
+      <div class="mini-stat"><div class="num" id="detailJumlahOrang">0</div><div class="label">Munfiq berkontribusi</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>Daftar Penyumbang</h2><div class="sub">Hanya setoran yang sudah diverifikasi pengurus</div></div>
+      </div>
+      <div id="detailMunfiqList"><div class="table-empty">Memuat data…</div></div>
+    </div>
+
+    <div class="note">
+      <span>💡</span>
+      <div>Terima kasih kepada seluruh munfiq yang telah berkontribusi. Semoga menjadi motivasi bagi warga lain untuk turut serta.</div>
+    </div>
+  </main>
+</div>
 
 <script>
   // TEMPEL URL WEB APP GOOGLE APPS SCRIPT DI SINI SETELAH DEPLOY (lihat Code.gs)
@@ -749,6 +809,9 @@
       document.getElementById('whoName').textContent = currentUser.nama;
       document.getElementById('whoRole').textContent = selectedRole === 'pengurus' ? 'Pengurus Lazis' : 'Fundraiser';
       document.getElementById('avatarInit').textContent = currentUser.nama.charAt(0);
+
+      const roleLabel = selectedRole === 'pengurus' ? 'Pengurus Lazis' : 'Fundraiser';
+      showToast(`✓ Berhasil masuk sebagai ${roleLabel} (${currentUser.nama})`, true);
 
       if(selectedRole === 'pengurus'){
         goTo('pengurusView');
@@ -857,6 +920,53 @@
   }
 
   window.addEventListener('DOMContentLoaded', loadLeaderboard);
+
+  // Klik nama ranting/AUM di leaderboard publik -> tampilkan detail penyumbang
+  document.getElementById('leaderboardList').addEventListener('click', function(e){
+    const info = e.target.closest('.ranting-info');
+    if(!info) return;
+    const nameEl = info.querySelector('.ranting-name');
+    if(!nameEl) return;
+    loadMunfiqDetail(nameEl.textContent.trim());
+  });
+
+  async function loadMunfiqDetail(entitas){
+    document.getElementById('detailEntitasName').textContent = entitas;
+    document.getElementById('detailTotal').textContent = 'Rp 0';
+    document.getElementById('detailJumlahOrang').textContent = '0';
+    document.getElementById('detailMunfiqList').innerHTML = '<div class="table-empty">Memuat data…</div>';
+    goTo('detailView');
+
+    if(WEB_APP_URL.includes('PASTE_URL')) return;
+    try {
+      const url = `${WEB_APP_URL}?action=getMunfiqDetail&entitas=${encodeURIComponent(entitas)}`;
+      const res = await fetch(url).then(r => r.json());
+      if(!res.success || !res.munfiq.length){
+        document.getElementById('detailMunfiqList').innerHTML = '<div class="table-empty">Belum ada setoran terverifikasi bulan ini untuk entitas ini.</div>';
+        return;
+      }
+      document.getElementById('detailTotal').textContent = 'Rp ' + Number(res.total_terkumpul).toLocaleString('id-ID');
+      document.getElementById('detailJumlahOrang').textContent = res.munfiq.length;
+
+      const max = Math.max(...res.munfiq.map(m => m.jumlah), 1);
+      document.getElementById('detailMunfiqList').innerHTML = res.munfiq.map((m, i) => {
+        const pct = Math.round(m.jumlah / max * 100);
+        const topClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+        return `
+          <div class="row ${topClass}">
+            <div class="rank">${i + 1}</div>
+            <div class="ranting-info">
+              <div class="ranting-name" style="text-decoration:none;">${m.nama_munfiq}</div>
+              <div class="ranting-meta">${m.jumlah_setoran} kali setor</div>
+              <div class="kaleng-track"><div class="kaleng-fill" style="width:${pct}%;"></div></div>
+            </div>
+            <div class="amount"><div class="rp">Rp ${Number(m.jumlah).toLocaleString('id-ID')}</div></div>
+          </div>`;
+      }).join('');
+    } catch(err){
+      document.getElementById('detailMunfiqList').innerHTML = '<div class="table-empty">Gagal memuat data. Cek koneksi.</div>';
+    }
+  }
 
   // ===================== DASHBOARD PENGURUS =====================
   let statusFilter = 'Belum diverifikasi';
@@ -1005,6 +1115,7 @@
     document.getElementById('usernameInput').value = '';
     resetForm();
     goTo('landingView');
+    showToast('Anda telah keluar dari akun', true);
   }
 
   function updateKalengMeta(){
