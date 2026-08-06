@@ -360,6 +360,25 @@
   .mini-stat .label{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
   .mini-stat.alert .num{ color:var(--bad); }
 
+  .compare-wrap{ display:flex; gap:16px; flex-wrap:wrap; align-items:stretch; }
+  .compare-card{
+    flex:1; min-width:160px; background:var(--cream); border:1px solid var(--line);
+    border-radius:16px; padding:18px;
+  }
+  .compare-card .label{ font-size:11.5px; color:var(--ink-soft); margin-bottom:6px; }
+  .compare-card .num{ font-family:'Fraunces', serif; font-size:24px; font-weight:700; }
+  .compare-card .sub2{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
+  .compare-trend{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-width:110px; border-radius:16px; padding:18px; text-align:center;
+  }
+  .compare-trend.up{ background:#E4F3E8; color:var(--good); }
+  .compare-trend.down{ background:#FBE7E1; color:var(--bad); }
+  .compare-trend.flat{ background:var(--cream); color:var(--ink-soft); }
+  .compare-trend .arrow{ font-size:26px; line-height:1; }
+  .compare-trend .pct{ font-family:'Fraunces', serif; font-size:20px; font-weight:700; margin-top:2px; }
+  .compare-trend .pct-label{ font-size:10.5px; margin-top:2px; }
+
   .filter-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
   .filter-tab{
     padding:8px 14px; border-radius:999px; border:1.5px solid var(--line);
@@ -687,8 +706,28 @@
 
     <div class="panel">
       <div class="panel-head">
-        <div><h2>Papan Perolehan (semua entitas)</h2><div class="sub">Diurutkan dari total tertinggi</div></div>
+        <div><h2>Perbandingan Bulanan</h2><div class="sub">Bulan ini vs bulan lalu</div></div>
+      </div>
+      <div id="perbandinganBulan"><div class="table-empty">Memuat data…</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Papan Perolehan</h2>
+          <div class="sub">Pilih bulan untuk melihat rekap periode tersebut</div>
+        </div>
         <div class="updated" id="pgUpdated">Memuat…</div>
+      </div>
+      <div class="grid-2" style="margin-bottom:18px;">
+        <div class="field" style="margin-bottom:0;">
+          <label for="rekapBulanSelect">Bulan</label>
+          <select id="rekapBulanSelect" onchange="onRekapPeriodeChange()"></select>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="rekapTahunSelect">Tahun</label>
+          <select id="rekapTahunSelect" onchange="onRekapPeriodeChange()"></select>
+        </div>
       </div>
       <div id="pengurusLeaderboard"><div class="table-empty">Memuat data…</div></div>
     </div>
@@ -980,8 +1019,85 @@
     loadSetoranTable();
   }
 
+  const NAMA_BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
   async function loadPengurusDashboard(){
-    await Promise.all([loadPengurusLeaderboard(), loadSetoranTable()]);
+    initPeriodeSelectors();
+    await Promise.all([loadPerbandinganBulan(), loadPengurusLeaderboard(), loadSetoranTable()]);
+  }
+
+  /** Isi dropdown Bulan & Tahun, default ke bulan berjalan. */
+  function initPeriodeSelectors(){
+    const bulanSelect = document.getElementById('rekapBulanSelect');
+    const tahunSelect = document.getElementById('rekapTahunSelect');
+    if(bulanSelect.options.length) return; // sudah pernah diisi, jangan reset pilihan user
+
+    const now = new Date();
+    NAMA_BULAN.forEach((nama, i) => {
+      const opt = document.createElement('option');
+      opt.value = i + 1;
+      opt.textContent = nama;
+      if(i === now.getMonth()) opt.selected = true;
+      bulanSelect.appendChild(opt);
+    });
+
+    const tahunSekarang = now.getFullYear();
+    for(let y = tahunSekarang; y >= tahunSekarang - 2; y--){
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      if(y === tahunSekarang) opt.selected = true;
+      tahunSelect.appendChild(opt);
+    }
+  }
+
+  function onRekapPeriodeChange(){
+    loadPengurusLeaderboard();
+  }
+
+  /** Kartu perbandingan total bulan ini vs bulan lalu. */
+  async function loadPerbandinganBulan(){
+    const wrap = document.getElementById('perbandinganBulan');
+    if(WEB_APP_URL.includes('PASTE_URL')){
+      wrap.innerHTML = '<div class="table-empty">Sambungkan WEB_APP_URL terlebih dahulu.</div>';
+      return;
+    }
+    try {
+      const res = await fetch(`${WEB_APP_URL}?action=getPerbandinganBulan`).then(r => r.json());
+      if(!res.success){
+        wrap.innerHTML = '<div class="table-empty">Gagal memuat perbandingan.</div>';
+        return;
+      }
+      const { bulan_ini, bulan_lalu, persen_perubahan } = res;
+      let trendClass = 'flat', arrow = '→', label = 'Tidak ada perubahan';
+      if(persen_perubahan === null){
+        arrow = '–'; label = 'Bulan lalu belum ada data';
+      } else if(persen_perubahan > 0){
+        trendClass = 'up'; arrow = '↑'; label = 'Naik dari bulan lalu';
+      } else if(persen_perubahan < 0){
+        trendClass = 'down'; arrow = '↓'; label = 'Turun dari bulan lalu';
+      }
+      wrap.innerHTML = `
+        <div class="compare-wrap">
+          <div class="compare-card">
+            <div class="label">${NAMA_BULAN[bulan_lalu.bulan-1]} ${bulan_lalu.tahun} (bulan lalu)</div>
+            <div class="num">Rp ${Number(bulan_lalu.total).toLocaleString('id-ID')}</div>
+            <div class="sub2">${bulan_lalu.entitas_aktif} ranting/AUM aktif</div>
+          </div>
+          <div class="compare-trend ${trendClass}">
+            <div class="arrow">${arrow}</div>
+            <div class="pct">${persen_perubahan === null ? '-' : Math.abs(persen_perubahan) + '%'}</div>
+            <div class="pct-label">${label}</div>
+          </div>
+          <div class="compare-card">
+            <div class="label">${NAMA_BULAN[bulan_ini.bulan-1]} ${bulan_ini.tahun} (bulan ini)</div>
+            <div class="num">Rp ${Number(bulan_ini.total).toLocaleString('id-ID')}</div>
+            <div class="sub2">${bulan_ini.entitas_aktif} ranting/AUM aktif</div>
+          </div>
+        </div>`;
+    } catch(err){
+      wrap.innerHTML = '<div class="table-empty">Gagal menghubungi server.</div>';
+    }
   }
 
   async function loadPengurusLeaderboard(){
@@ -990,15 +1106,20 @@
       wrap.innerHTML = '<div class="table-empty">Sambungkan WEB_APP_URL terlebih dahulu untuk melihat data live.</div>';
       return;
     }
+    const bulan = document.getElementById('rekapBulanSelect').value;
+    const tahun = document.getElementById('rekapTahunSelect').value;
     try {
-      const res = await fetch(`${WEB_APP_URL}?action=getLeaderboard`).then(r => r.json());
+      const url = `${WEB_APP_URL}?action=getRekapPeriode&bulan=${bulan}&tahun=${tahun}`;
+      const res = await fetch(url).then(r => r.json());
       if(!res.success || !res.leaderboard.length){
-        wrap.innerHTML = '<div class="table-empty">Belum ada data rekap bulan ini.</div>';
+        document.getElementById('pgTotal').textContent = 'Rp 0';
+        document.getElementById('pgEntitas').textContent = '0';
+        wrap.innerHTML = `<div class="table-empty">Belum ada data untuk ${NAMA_BULAN[bulan-1]} ${tahun}.</div>`;
         return;
       }
       document.getElementById('pgTotal').textContent = 'Rp ' + Number(res.total_terkumpul).toLocaleString('id-ID');
       document.getElementById('pgEntitas').textContent = res.entitas_aktif;
-      document.getElementById('pgUpdated').textContent = 'Diperbarui otomatis dari Rekap_Bulan_Ini';
+      document.getElementById('pgUpdated').textContent = `Rekap ${NAMA_BULAN[bulan-1]} ${tahun}`;
 
       const max = Math.max(...res.leaderboard.map(r => Number(r.total_setoran_bulan_ini) || 0), 1);
       wrap.innerHTML = res.leaderboard.map((r, i) => {
