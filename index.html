@@ -464,7 +464,7 @@
   <main id="landingMain">
     <div class="panel">
       <div class="panel-head">
-        <div><h2>Papan Perolehan Ranting</h2><div class="sub">Rekap setoran kaleng ihsan — Juli 2026</div></div>
+        <div><h2>Papan Perolehan Ranting</h2><div class="sub" id="periodeLabel">Rekap setoran kaleng ihsan</div></div>
         <div class="updated">Diperbarui hari ini, 09:40 WIB</div>
       </div>
 
@@ -502,7 +502,7 @@
       <div class="row">
         <div class="rank">4</div>
         <div class="ranting-info">
-          <div class="ranting-name">SDM 1 Pekajangan</div>
+          <div class="ranting-name">SD Muh 1 Pekajangan</div>
           <div class="ranting-meta"><span class="tag-mini aum">AUM</span>24 kaleng aktif</div>
           <div class="kaleng-track"><div class="kaleng-fill" style="width:62%; animation-delay:.2s;"></div></div>
         </div>
@@ -532,7 +532,7 @@
       <div class="row">
         <div class="rank">7</div>
         <div class="ranting-info">
-          <div class="ranting-name">SMPM Pekajangan</div>
+          <div class="ranting-name">SMP Muh Pekajangan</div>
           <div class="ranting-meta"><span class="tag-mini aum">AUM</span>15 kaleng aktif</div>
           <div class="kaleng-track"><div class="kaleng-fill" style="width:29%; animation-delay:.35s;"></div></div>
         </div>
@@ -601,36 +601,7 @@
         <div class="field">
           <label for="formEntitasSelect">Ranting / AUM</label>
           <select id="formEntitasSelect" onchange="onEntitasChange()">
-            <option value="">Pilih ranting/AUM</option>
-            <optgroup label="Ranting">
-              <option value="Ambokembang">Ambokembang</option>
-              <option value="Pangkah">Pangkah</option>
-              <option value="Tangkil Tengah">Tangkil Tengah</option>
-              <option value="Tangkil Kulon">Tangkil Kulon</option>
-              <option value="Karanglo">Karanglo</option>
-              <option value="Karangdowo">Karangdowo</option>
-              <option value="Podo">Podo</option>
-              <option value="Rengas">Rengas</option>
-              <option value="Pekajangan Barat 1">Pekajangan Barat 1</option>
-              <option value="Pekajangan Barat 2">Pekajangan Barat 2</option>
-              <option value="Pekajangan Barat 3">Pekajangan Barat 3</option>
-              <option value="Pekajangan Barat 4">Pekajangan Barat 4</option>
-              <option value="Pekajangan Timur 1">Pekajangan Timur 1</option>
-              <option value="Pekajangan Timur 2">Pekajangan Timur 2</option>
-              <option value="Pekajangan Timur 3">Pekajangan Timur 3</option>
-              <option value="Pekajangan Timur 4">Pekajangan Timur 4</option>
-            </optgroup>
-            <optgroup label="AUM (Sekolah)">
-              <option value="SDM Ambokembang">SDM Ambokembang</option>
-              <option value="SDM 1 Pekajangan">SDM 1 Pekajangan</option>
-              <option value="SDM 2 Pekajangan">SDM 2 Pekajangan</option>
-              <option value="SDM 3 Pekajangan">SDM 3 Pekajangan</option>
-              <option value="SDM 4 Pekajangan">SDM 4 Pekajangan</option>
-              <option value="SDM Tangkil Tengah">SDM Tangkil Tengah</option>
-              <option value="SDM Pangkah">SDM Pangkah</option>
-              <option value="SMPM Pekajangan">SMPM Pekajangan</option>
-              <option value="SMA Muh 1 Pekajangan">SMA Muh 1 Pekajangan</option>
-            </optgroup>
+            <option value="">Memuat daftar ranting/AUM…</option>
           </select>
         </div>
         <div class="field">
@@ -802,6 +773,7 @@
 <script>
   // TEMPEL URL WEB APP GOOGLE APPS SCRIPT DI SINI SETELAH DEPLOY (lihat Code.gs)
   const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxRWGtfjbFHRsS1wFRL4-HPMxLjkjSiaOzc1wnVmMtCMH-z2pcCPgumf7XfQOsXREUZ/exec';
+  const NAMA_BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
   let currentUser = null;
   let selectedRole = 'fundraiser';
@@ -861,6 +833,7 @@
         document.getElementById('sumPetugas').textContent = currentUser.nama;
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('tglSetor').value = today;
+        loadEntitasOptions();
         goTo('formView');
       }
 
@@ -869,6 +842,43 @@
       loginBtnCard.textContent = 'Masuk';
       errorMsg.textContent = 'Gagal menghubungi server. Cek koneksi atau URL Web App.';
       errorMsg.style.display = 'block';
+    }
+  }
+
+  /** Isi dropdown Ranting/AUM langsung dari Data_Munfiq (satu-satunya sumber
+   *  kebenaran nama entitas) — supaya tidak ada lagi mismatch ejaan. */
+  async function loadEntitasOptions(){
+    const select = document.getElementById('formEntitasSelect');
+    select.innerHTML = '<option value="">Memuat daftar ranting/AUM…</option>';
+
+    if(WEB_APP_URL.includes('PASTE_URL')){
+      select.innerHTML = '<option value="">Sambungkan WEB_APP_URL dulu</option>';
+      return;
+    }
+    try {
+      const res = await fetch(`${WEB_APP_URL}?action=getEntitasList`).then(r => r.json());
+      if(!res.success || !res.entitas.length){
+        select.innerHTML = '<option value="">Belum ada ranting/AUM terdaftar di Data_Munfiq</option>';
+        return;
+      }
+      const groupRanting = document.createElement('optgroup');
+      groupRanting.label = 'Ranting';
+      const groupAUM = document.createElement('optgroup');
+      groupAUM.label = 'AUM (Sekolah)';
+
+      res.entitas.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.nama_entitas;
+        opt.textContent = e.nama_entitas;
+        opt.dataset.kategori = e.kategori;
+        (e.kategori === 'AUM' ? groupAUM : groupRanting).appendChild(opt);
+      });
+
+      select.innerHTML = '<option value="">Pilih ranting/AUM</option>';
+      if(groupRanting.children.length) select.appendChild(groupRanting);
+      if(groupAUM.children.length) select.appendChild(groupAUM);
+    } catch(err){
+      select.innerHTML = '<option value="">Gagal memuat daftar. Cek koneksi.</option>';
     }
   }
 
@@ -886,8 +896,7 @@
   function currentKategori(){
     const select = document.getElementById('formEntitasSelect');
     const opt = select.options[select.selectedIndex];
-    if(!opt || !opt.parentElement) return '';
-    return opt.parentElement.label === 'AUM (Sekolah)' ? 'AUM' : 'Ranting';
+    return opt ? (opt.dataset.kategori || 'Ranting') : '';
   }
 
   /** Isi ulang dropdown kaleng dari Data_Munfiq sesuai entitas yang login. */
@@ -909,21 +918,24 @@
     }
   }
 
-  /** Muat leaderboard publik dari Rekap_Bulan_Ini saat halaman dibuka. */
+  /** Muat leaderboard publik (dihitung live untuk bulan berjalan) saat halaman dibuka. */
   async function loadLeaderboard(){
     if(WEB_APP_URL.includes('PASTE_URL')) return; // belum di-deploy, tetap pakai data contoh
     try {
       const url = `${WEB_APP_URL}?action=getLeaderboard`;
       const res = await fetch(url).then(r => r.json());
       if(!res.success) return;
-      renderLeaderboard(res.leaderboard, res.total_terkumpul, res.total_kaleng_aktif, res.entitas_aktif);
+      renderLeaderboard(res.leaderboard, res.total_terkumpul, res.total_kaleng_aktif, res.entitas_aktif, res.bulan, res.tahun);
     } catch(err){
       console.error('Gagal memuat leaderboard', err);
     }
   }
 
-  function renderLeaderboard(rows, totalTerkumpul, totalKaleng, entitasAktif){
+  function renderLeaderboard(rows, totalTerkumpul, totalKaleng, entitasAktif, bulan, tahun){
     const list = document.getElementById('leaderboardList');
+    if(bulan && tahun){
+      document.getElementById('periodeLabel').textContent = `Rekap setoran kaleng ihsan — ${NAMA_BULAN[bulan-1]} ${tahun}`;
+    }
     if(!list || !rows || !rows.length) return;
 
     document.querySelectorAll('.stat-card .num')[0].textContent = 'Rp ' + Number(totalTerkumpul).toLocaleString('id-ID');
@@ -1018,8 +1030,6 @@
     btn.classList.add('active');
     loadSetoranTable();
   }
-
-  const NAMA_BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
   async function loadPengurusDashboard(){
     initPeriodeSelectors();
