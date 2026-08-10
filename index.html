@@ -701,13 +701,13 @@
   <main>
     <button class="back-link" onclick="goTo('landingView')" style="margin-bottom:16px;">← Kembali ke papan perolehan</button>
     <div class="page-head">
-      <div class="eyebrow">Detail Penyumbang</div>
+      <div class="eyebrow" id="detailPeriodeLabel">Periode</div>
       <h1 id="detailEntitasName">Ranting</h1>
-      <div class="desc">Daftar munfiq yang sudah menyumbang bulan ini, diurutkan dari nominal terbesar.</div>
+      <div class="desc">Daftar munfiq yang sudah menyumbang pada periode ini, diurutkan dari nominal terbesar.</div>
     </div>
 
     <div class="mini-stats">
-      <div class="mini-stat"><div class="num" id="detailTotal">Rp 0</div><div class="label">Total terkumpul bulan ini</div></div>
+      <div class="mini-stat"><div class="num" id="detailTotal">Rp 0</div><div class="label">Total terkumpul periode ini</div></div>
       <div class="mini-stat"><div class="num" id="detailJumlahOrang">0</div><div class="label">Munfiq berkontribusi</div></div>
     </div>
 
@@ -1009,16 +1009,18 @@
   window.addEventListener('DOMContentLoaded', loadLeaderboard);
 
   // Klik nama ranting/AUM di leaderboard publik -> tampilkan detail penyumbang
+  // (mengikuti bulan yang SEDANG ditampilkan, bukan selalu bulan berjalan)
   document.getElementById('leaderboardList').addEventListener('click', function(e){
     const info = e.target.closest('.ranting-info');
     if(!info) return;
     const nameEl = info.querySelector('.ranting-name');
     if(!nameEl) return;
-    loadMunfiqDetail(nameEl.textContent.trim());
+    loadMunfiqDetail(nameEl.textContent.trim(), viewBulan, viewTahun);
   });
 
-  async function loadMunfiqDetail(entitas){
+  async function loadMunfiqDetail(entitas, bulan, tahun){
     document.getElementById('detailEntitasName').textContent = entitas;
+    document.getElementById('detailPeriodeLabel').textContent = `${NAMA_BULAN[bulan-1]} ${tahun}`;
     document.getElementById('detailTotal').textContent = 'Rp 0';
     document.getElementById('detailJumlahOrang').textContent = '0';
     document.getElementById('detailMunfiqList').innerHTML = '<div class="table-empty">Memuat data…</div>';
@@ -1026,10 +1028,10 @@
 
     if(WEB_APP_URL.includes('PASTE_URL')) return;
     try {
-      const url = `${WEB_APP_URL}?action=getMunfiqDetail&entitas=${encodeURIComponent(entitas)}`;
+      const url = `${WEB_APP_URL}?action=getMunfiqDetail&entitas=${encodeURIComponent(entitas)}&bulan=${bulan}&tahun=${tahun}`;
       const res = await fetch(url).then(r => r.json());
       if(!res.success || !res.munfiq.length){
-        document.getElementById('detailMunfiqList').innerHTML = '<div class="table-empty">Belum ada setoran terverifikasi bulan ini untuk entitas ini.</div>';
+        document.getElementById('detailMunfiqList').innerHTML = `<div class="table-empty">Belum ada setoran terverifikasi untuk ${NAMA_BULAN[bulan-1]} ${tahun}.</div>`;
         return;
       }
       document.getElementById('detailTotal').textContent = 'Rp ' + Number(res.total_terkumpul).toLocaleString('id-ID');
