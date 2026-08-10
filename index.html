@@ -175,6 +175,26 @@
   .updated{ font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:6px; }
   .updated::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--good); }
 
+  .periode-nav{
+    display:flex; align-items:center; justify-content:center; gap:16px;
+    margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--line);
+  }
+  .periode-arrow{
+    width:34px; height:34px; border-radius:50%; border:1.5px solid var(--line);
+    background:var(--white); font-size:18px; font-weight:700; color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:center; line-height:1;
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .periode-arrow:hover{ border-color:var(--orange); color:var(--orange-deep); background:var(--cream); }
+  .periode-arrow:disabled{ opacity:0.35; cursor:not-allowed; }
+  .periode-arrow:disabled:hover{ border-color:var(--line); color:var(--ink-soft); background:var(--white); }
+  .periode-current{
+    font-family:'Fraunces', serif; font-weight:700; font-size:16px; min-width:160px; text-align:center;
+  }
+  .periode-fallback-note{
+    text-align:center; font-size:12px; color:var(--ink-soft); margin:-8px 0 16px;
+  }
+
   .row{
     display:grid; grid-template-columns:40px 1fr 120px;
     align-items:center; gap:16px; padding:14px 0; border-bottom:1px solid var(--line);
@@ -464,80 +484,17 @@
   <main id="landingMain">
     <div class="panel">
       <div class="panel-head">
-        <div><h2>Papan Perolehan Ranting</h2><div class="sub" id="periodeLabel">Rekap setoran kaleng ihsan</div></div>
-        <div class="updated">Diperbarui hari ini, 09:40 WIB</div>
+        <div><h2>Papan Perolehan Ranting</h2><div class="sub" id="periodeNote">Memuat data…</div></div>
+      </div>
+
+      <div class="periode-nav">
+        <button class="periode-arrow" id="periodePrev" onclick="navigasiBulan(-1)" aria-label="Bulan sebelumnya">‹</button>
+        <div class="periode-current" id="periodeLabel">–</div>
+        <button class="periode-arrow" id="periodeNext" onclick="navigasiBulan(1)" aria-label="Bulan berikutnya">›</button>
       </div>
 
       <div id="leaderboardList">
-      <div class="row top1">
-        <div class="rank">1</div>
-        <div class="ranting-info">
-          <div class="ranting-name">Pekajangan Barat 2</div>
-          <div class="ranting-meta"><span class="tag-mini ranting">Ranting</span>34 kaleng aktif</div>
-          <div class="kaleng-track"><div class="kaleng-fill" style="width:100%; animation-delay:.05s;"></div></div>
-        </div>
-        <div class="amount"><div class="rp">Rp 9.850.000</div><div class="pct">100%</div></div>
-      </div>
-
-      <div class="row top2">
-        <div class="rank">2</div>
-        <div class="ranting-info">
-          <div class="ranting-name">SMA Muh 1 Pekajangan</div>
-          <div class="ranting-meta"><span class="tag-mini aum">AUM</span>29 kaleng aktif</div>
-          <div class="kaleng-track"><div class="kaleng-fill" style="width:87%; animation-delay:.1s;"></div></div>
-        </div>
-        <div class="amount"><div class="rp">Rp 8.560.000</div><div class="pct">87%</div></div>
-      </div>
-
-      <div class="row top3">
-        <div class="rank">3</div>
-        <div class="ranting-info">
-          <div class="ranting-name">Pekajangan Timur 1</div>
-          <div class="ranting-meta"><span class="tag-mini ranting">Ranting</span>26 kaleng aktif</div>
-          <div class="kaleng-track"><div class="kaleng-fill" style="width:74%; animation-delay:.15s;"></div></div>
-        </div>
-        <div class="amount"><div class="rp">Rp 7.290.000</div><div class="pct">74%</div></div>
-      </div>
-
-      <div class="row">
-        <div class="rank">4</div>
-        <div class="ranting-info">
-          <div class="ranting-name">SD Muh 1 Pekajangan</div>
-          <div class="ranting-meta"><span class="tag-mini aum">AUM</span>24 kaleng aktif</div>
-          <div class="kaleng-track"><div class="kaleng-fill" style="width:62%; animation-delay:.2s;"></div></div>
-        </div>
-        <div class="amount"><div class="rp">Rp 6.110.000</div><div class="pct">62%</div></div>
-      </div>
-
-      <div class="row">
-        <div class="rank">5</div>
-        <div class="ranting-info">
-          <div class="ranting-name">Ambokembang</div>
-          <div class="ranting-meta"><span class="tag-mini ranting">Ranting</span>21 kaleng aktif</div>
-          <div class="kaleng-track"><div class="kaleng-fill" style="width:51%; animation-delay:.25s;"></div></div>
-        </div>
-        <div class="amount"><div class="rp">Rp 5.020.000</div><div class="pct">51%</div></div>
-      </div>
-
-      <div class="row">
-        <div class="rank">6</div>
-        <div class="ranting-info">
-          <div class="ranting-name">Tangkil Kulon</div>
-          <div class="ranting-meta"><span class="tag-mini ranting">Ranting</span>18 kaleng aktif</div>
-          <div class="kaleng-track"><div class="kaleng-fill" style="width:38%; animation-delay:.3s;"></div></div>
-        </div>
-        <div class="amount"><div class="rp">Rp 3.740.000</div><div class="pct">38%</div></div>
-      </div>
-
-      <div class="row">
-        <div class="rank">7</div>
-        <div class="ranting-info">
-          <div class="ranting-name">SMP Muh Pekajangan</div>
-          <div class="ranting-meta"><span class="tag-mini aum">AUM</span>15 kaleng aktif</div>
-          <div class="kaleng-track"><div class="kaleng-fill" style="width:29%; animation-delay:.35s;"></div></div>
-        </div>
-        <div class="amount"><div class="rp">Rp 2.850.000</div><div class="pct">29%</div></div>
-      </div>
+        <div class="table-empty">Memuat data…</div>
       </div>
     </div>
 
@@ -918,32 +875,109 @@
     }
   }
 
-  /** Muat leaderboard publik (dihitung live untuk bulan berjalan) saat halaman dibuka. */
+  // State bulan yang sedang ditampilkan di papan perolehan publik
+  let viewBulan = null;
+  let viewTahun = null;
+  let usedFallbackMonth = false;
+
+  /** Saat halaman dibuka: coba bulan berjalan dulu. Kalau kosong, otomatis
+   *  mundur cari bulan terakhir yang punya data (maksimal 12 bulan ke belakang)
+   *  supaya orang tidak melihat halaman kosong tanpa alasan jelas. */
   async function loadLeaderboard(){
-    if(WEB_APP_URL.includes('PASTE_URL')) return; // belum di-deploy, tetap pakai data contoh
+    const now = new Date();
+    viewBulan = now.getMonth() + 1;
+    viewTahun = now.getFullYear();
+
+    if(WEB_APP_URL.includes('PASTE_URL')){
+      renderEmptyState('Website belum tersambung ke database (WEB_APP_URL belum diisi).');
+      return;
+    }
+
+    const dataBulanIni = await fetchPeriode(viewBulan, viewTahun);
+    if(dataBulanIni && dataBulanIni.leaderboard && dataBulanIni.leaderboard.length){
+      usedFallbackMonth = false;
+      renderLeaderboard(dataBulanIni);
+      return;
+    }
+
+    // Bulan berjalan kosong -> mundur cari bulan terakhir yang ada data
+    let b = viewBulan, t = viewTahun;
+    for(let i = 0; i < 12; i++){
+      b -= 1;
+      if(b === 0){ b = 12; t -= 1; }
+      const data = await fetchPeriode(b, t);
+      if(data && data.leaderboard && data.leaderboard.length){
+        viewBulan = b; viewTahun = t; usedFallbackMonth = true;
+        renderLeaderboard(data);
+        return;
+      }
+    }
+
+    // Benar-benar belum ada data sama sekali di 12 bulan terakhir
+    usedFallbackMonth = false;
+    renderEmptyState('Belum ada setoran yang tercatat. Data akan muncul di sini setelah fundraiser mulai input.');
+  }
+
+  async function fetchPeriode(bulan, tahun){
     try {
-      const url = `${WEB_APP_URL}?action=getLeaderboard`;
+      const url = `${WEB_APP_URL}?action=getRekapPeriode&bulan=${bulan}&tahun=${tahun}`;
       const res = await fetch(url).then(r => r.json());
-      if(!res.success) return;
-      renderLeaderboard(res.leaderboard, res.total_terkumpul, res.total_kaleng_aktif, res.entitas_aktif, res.bulan, res.tahun);
+      return res.success ? res : null;
     } catch(err){
-      console.error('Gagal memuat leaderboard', err);
+      return null;
     }
   }
 
-  function renderLeaderboard(rows, totalTerkumpul, totalKaleng, entitasAktif, bulan, tahun){
-    const list = document.getElementById('leaderboardList');
-    if(bulan && tahun){
-      document.getElementById('periodeLabel').textContent = `Rekap setoran kaleng ihsan — ${NAMA_BULAN[bulan-1]} ${tahun}`;
-    }
-    if(!list || !rows || !rows.length) return;
+  async function navigasiBulan(delta){
+    let b = viewBulan + delta;
+    let t = viewTahun;
+    if(b === 0){ b = 12; t -= 1; }
+    if(b === 13){ b = 1; t += 1; }
 
-    document.querySelectorAll('.stat-card .num')[0].textContent = 'Rp ' + Number(totalTerkumpul).toLocaleString('id-ID');
-    document.querySelectorAll('.stat-card .num')[1].textContent = entitasAktif;
+    // Tidak boleh maju melewati bulan berjalan
+    const now = new Date();
+    if(t > now.getFullYear() || (t === now.getFullYear() && b > now.getMonth() + 1)) return;
+
+    document.getElementById('leaderboardList').innerHTML = '<div class="table-empty">Memuat data…</div>';
+    const data = await fetchPeriode(b, t);
+    viewBulan = b; viewTahun = t; usedFallbackMonth = false;
+    if(data && data.leaderboard && data.leaderboard.length){
+      renderLeaderboard(data);
+    } else {
+      renderEmptyState(`Belum ada setoran terverifikasi untuk ${NAMA_BULAN[b-1]} ${t}.`);
+    }
+  }
+
+  function updatePeriodeArrows(){
+    document.getElementById('periodeLabel').textContent = `${NAMA_BULAN[viewBulan-1]} ${viewTahun}`;
+    const now = new Date();
+    const isCurrentOrFuture = viewTahun === now.getFullYear() && viewBulan === now.getMonth() + 1;
+    document.getElementById('periodeNext').disabled = isCurrentOrFuture;
+  }
+
+  function renderEmptyState(message){
+    updatePeriodeArrows();
+    document.getElementById('periodeNote').textContent = 'Papan Perolehan Ranting';
+    document.querySelectorAll('.stat-card .num')[0].textContent = 'Rp 0';
+    document.querySelectorAll('.stat-card .num')[1].textContent = '0';
+    document.querySelectorAll('.stat-card .num')[2].textContent = '0';
+    document.getElementById('leaderboardList').innerHTML = `<div class="table-empty">${message}</div>`;
+  }
+
+  function renderLeaderboard(data){
+    updatePeriodeArrows();
+    document.getElementById('periodeNote').textContent = usedFallbackMonth
+      ? `Bulan berjalan belum ada data — menampilkan periode terakhir yang tersedia`
+      : 'Papan Perolehan Ranting';
+
+    const rows = data.leaderboard;
+    document.querySelectorAll('.stat-card .num')[0].textContent = 'Rp ' + Number(data.total_terkumpul).toLocaleString('id-ID');
+    document.querySelectorAll('.stat-card .num')[1].textContent = data.entitas_aktif;
+    const totalKaleng = rows.reduce((sum, r) => sum + (Number(r.jumlah_kaleng_aktif) || 0), 0);
     document.querySelectorAll('.stat-card .num')[2].textContent = totalKaleng;
 
     const max = Math.max(...rows.map(r => Number(r.total_setoran_bulan_ini) || 0), 1);
-    list.innerHTML = rows.map((r, i) => {
+    document.getElementById('leaderboardList').innerHTML = rows.map((r, i) => {
       const pct = Math.round((Number(r.total_setoran_bulan_ini) || 0) / max * 100);
       const topClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
       const tagClass = r.kategori === 'AUM' ? 'aum' : 'ranting';
