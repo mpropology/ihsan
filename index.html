@@ -310,6 +310,7 @@
   }
   .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 16px 28px -12px rgba(217,96,10,0.65); }
   .btn-primary:active{ transform:translateY(0); }
+  .btn-primary:disabled{ opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
 
   .login-foot{ margin-top:18px; text-align:center; font-size:12px; color:var(--ink-soft); }
   .error-msg{
@@ -472,7 +473,7 @@
   <div id="landingHeader">
     <div class="hero">
       <div class="eyebrow">Transparansi Kaleng Ihsan</div>
-      <h1>Setiap lembar yang masuk, tercatat dan terlihat oleh semua.</h1>
+      <h1>Setiap koin yang masuk, tercatat dan terlihat oleh semua.</h1>
       <div class="stat-row">
         <div class="stat-card"><div class="num">Rp 48.250.000</div><div class="label">Total terkumpul bulan ini</div></div>
         <div class="stat-card"><div class="num">25</div><div class="label">Ranting & AUM aktif menyetor</div></div>
@@ -612,6 +613,29 @@
     <div class="actions">
       <button class="btn-secondary" onclick="resetForm()">Bersihkan</button>
       <button class="btn-primary" onclick="submitSetoran()">Simpan Setoran</button>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <div class="panel-head">
+        <div><h2 style="font-size:18px;">Riwayat Setoran Saya</h2><div class="sub">50 setoran terakhir yang Anda input, terbaru dulu</div></div>
+        <button class="btn-export" onclick="loadRiwayatSaya()">↻ Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table class="setoran-table">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Ranting/AUM</th>
+              <th>Kaleng</th>
+              <th>Nominal</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="riwayatSayaBody">
+            <tr><td colspan="5" class="table-empty">Memuat data…</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </main>
 </div>
@@ -791,6 +815,7 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('tglSetor').value = today;
         loadEntitasOptions();
+        loadRiwayatSaya();
         goTo('formView');
       }
 
@@ -1349,11 +1374,11 @@
     };
 
     const submitBtn = document.querySelector('#formView .btn-primary');
+    submitBtn.disabled = true;
     submitBtn.textContent = 'Menyimpan…';
 
     try {
       const res = await postToBackend(payload);
-      submitBtn.textContent = 'Simpan Setoran';
       if(!res.success){
         showToast(res.message || 'Gagal menyimpan setoran', false);
         return;
@@ -1361,9 +1386,45 @@
       showToast('Setoran berhasil disimpan', true);
       setTimeout(resetForm, 900);
       loadLeaderboard();
+      loadRiwayatSaya();
     } catch(err){
-      submitBtn.textContent = 'Simpan Setoran';
       showToast('Gagal menghubungi server. Cek koneksi atau URL Web App.', false);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Simpan Setoran';
+    }
+  }
+
+  /** Riwayat setoran milik fundraiser yang sedang login — biar bisa cek sendiri
+   *  mana yang sudah/belum tersimpan, tanpa perlu nanya pengurus. */
+  async function loadRiwayatSaya(){
+    const tbody = document.getElementById('riwayatSayaBody');
+    if(!currentUser || WEB_APP_URL.includes('PASTE_URL')){
+      tbody.innerHTML = '<tr><td colspan="5" class="table-empty">Belum bisa memuat riwayat.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '<tr><td colspan="5" class="table-empty">Memuat data…</td></tr>';
+    try {
+      const url = `${WEB_APP_URL}?action=getRiwayatPetugas&petugas=${encodeURIComponent(currentUser.nama)}`;
+      const res = await fetch(url).then(r => r.json());
+      if(!res.success || !res.setoran.length){
+        tbody.innerHTML = '<tr><td colspan="5" class="table-empty">Belum ada setoran yang Anda input.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = res.setoran.map(s => {
+        const badgeClass = s.status_verifikasi === 'Terverifikasi' ? 'ok' : s.status_verifikasi === 'Ditolak' ? 'tolak' : 'belum';
+        const tglTampil = s.tanggal ? new Date(s.tanggal).toLocaleDateString('id-ID') : '-';
+        return `
+          <tr>
+            <td>${tglTampil}</td>
+            <td>${s.entitas}</td>
+            <td>${s.id_kaleng}<div class="cell-sub">${s.nama_munfiq || ''}</div></td>
+            <td class="cell-rp">Rp ${Number(s.jumlah || 0).toLocaleString('id-ID')}</td>
+            <td><span class="status-badge ${badgeClass}">${s.status_verifikasi}</span></td>
+          </tr>`;
+      }).join('');
+    } catch(err){
+      tbody.innerHTML = '<tr><td colspan="5" class="table-empty">Gagal menghubungi server.</td></tr>';
     }
   }
 
