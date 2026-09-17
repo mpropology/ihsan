@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IhsanMu — Lazismu Pekalongan</title>
+<title>Ihsan Kolektor — Lazismu Pekalongan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -41,8 +41,6 @@
     .view.active{ animation:none; }
   }
 
-  /* Strip penanda "sedang di halaman apa" — dipasang di setiap halaman non-publik
-     supaya terasa seperti berpindah layar sungguhan, bukan cuma ganti isi. */
   .mode-strip{
     display:flex; align-items:center; gap:8px;
     padding:10px 24px; font-size:12.5px; font-weight:700;
@@ -50,6 +48,7 @@
   }
   .mode-strip.mode-login{ background:var(--ink); }
   .mode-strip.mode-form{ background:var(--orange-deep); }
+  .mode-strip.mode-bendahara{ background:#2f5b8a; }
   .mode-strip.mode-pengurus{ background:#2f6b45; }
   .mode-strip.mode-detail{ background:var(--orange-deep); }
 
@@ -78,7 +77,13 @@
     background:linear-gradient(155deg, var(--orange), var(--orange-deep));
     display:flex; align-items:center; justify-content:center;
     font-size:16px;
+    overflow:hidden;
   }
+  .brand .mark img{
+    width:100%; height:100%; object-fit:contain; display:block;
+  }
+  .brand-logo{ height:34px; width:auto; display:block; }
+  .brand-text{ font-weight:800; font-size:15px; color:var(--ink); }
   .btn-login{
     display:flex;
     align-items:center;
@@ -284,11 +289,11 @@
   .login-card h1{ font-size:24px; font-weight:700; margin-bottom:6px; }
   .login-card .desc{ font-size:13px; color:var(--ink-soft); margin-bottom:26px; line-height:1.5; }
 
-  .role-toggle{ display:flex; gap:8px; margin-bottom:18px; }
+  .role-toggle{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:18px; }
   .role-btn{
-    flex:1; padding:10px; border-radius:11px; border:1.5px solid var(--line);
-    background:var(--cream); font-size:12.5px; font-weight:700; color:var(--ink-soft);
-    transition:all .15s;
+    padding:10px 6px; border-radius:11px; border:1.5px solid var(--line);
+    background:var(--cream); font-size:11.5px; font-weight:700; color:var(--ink-soft);
+    transition:all .15s; white-space:nowrap;
   }
   .role-btn.active{ border-color:var(--orange); background:var(--white); color:var(--orange-deep); box-shadow:0 0 0 3px rgba(242,118,12,0.12); }
 
@@ -451,12 +456,53 @@
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
   .toast .dot{ width:8px; height:8px; border-radius:50%; background:var(--good); }
+
+  /* ===================== PENYALURAN DANA (publik) ===================== */
+  .salur-summary{
+    display:flex; gap:20px; flex-wrap:wrap; align-items:center;
+    padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid var(--line);
+  }
+  .salur-summary-num{ min-width:160px; }
+  .salur-summary-num .num{ font-family:'Fraunces', serif; font-size:26px; font-weight:700; color:var(--good); }
+  .salur-summary-num .label{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .salur-progress-wrap{ flex:1; min-width:200px; }
+  .salur-progress-track{
+    height:14px; border-radius:7px; background:#E4F3E8; border:1px solid #CFE7D6; overflow:hidden;
+  }
+  .salur-progress-fill{
+    height:100%; border-radius:7px 0 0 7px;
+    background:linear-gradient(90deg, #6FBF8B, var(--good));
+    transition:width .6s ease;
+  }
+  .salur-progress-label{ font-size:12px; color:var(--ink-soft); margin-top:6px; }
+  .salur-kat-row{ display:flex; align-items:center; gap:14px; padding:10px 0; }
+  .salur-kat-name{ min-width:170px; font-size:13.5px; font-weight:700; flex-shrink:0; }
+  .salur-kat-track{
+    flex:1; height:12px; border-radius:6px; background:#E4F3E8; border:1px solid #CFE7D6; overflow:hidden;
+  }
+  .salur-kat-fill{ height:100%; border-radius:6px 0 0 6px; background:linear-gradient(90deg, #8FD1A6, var(--good)); }
+  .salur-kat-rp{ min-width:110px; text-align:right; font-weight:700; font-size:13px; flex-shrink:0; }
+
+  /* ===================== PEROLEHAN PER FUNDRAISER (pengurus) ===================== */
+  .fr-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .fr-table th{
+    text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--ink-soft); padding:8px 10px; border-bottom:2px solid var(--line);
+  }
+  .fr-table td{ padding:11px 10px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  .fr-table tr:last-child td{ border-bottom:none; }
+  .fr-name{ font-weight:700; }
+  .fr-rank-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px; border-radius:50%; background:var(--cream-2);
+    color:var(--orange-deep); font-weight:700; font-size:11px; margin-right:8px;
+  }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="mark">i</span> IhsanMu </div>
+  <div class="brand"><img class="brand-logo" src="data:image/png;base64,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" alt="Lazismu"><span class="brand-text">IhsanMu</span></div>
   <button class="btn-login" id="loginBtn" onclick="goTo('loginView')">🔐 Masuk Fundraiser / Pengurus</button>
   <div class="who" id="whoBar">
     <div class="avatar" id="avatarInit">–</div>
@@ -499,9 +545,40 @@
       </div>
     </div>
 
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>Penyaluran Dana</h2><div class="sub">Ke mana dana yang terkumpul disalurkan — periode yang sama dengan papan perolehan di atas</div></div>
+      </div>
+
+      <div class="salur-summary">
+        <div class="salur-summary-num">
+          <div class="num" id="salurTotal">Rp 0</div>
+          <div class="label">Tersalurkan periode ini</div>
+        </div>
+        <div class="salur-progress-wrap">
+          <div class="salur-progress-track"><div class="salur-progress-fill" id="salurProgressFill" style="width:0%;"></div></div>
+          <div class="salur-progress-label" id="salurProgressLabel">0% dari dana terkumpul periode ini</div>
+        </div>
+      </div>
+
+      <div id="salurKategoriList" style="margin-top:8px;">
+        <div class="table-empty">Memuat data…</div>
+      </div>
+
+      <div id="salurDaftarWrap" style="margin-top:20px; display:none;">
+        <h3 style="font-size:14px; margin-bottom:12px;">Penyaluran Terbaru</h3>
+        <div class="table-wrap">
+          <table class="setoran-table">
+            <thead><tr><th>Tanggal</th><th>Kategori</th><th>Penerima</th><th>Nominal</th></tr></thead>
+            <tbody id="salurDaftarBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <div class="note">
       <span>ℹ️</span>
-      <div><b>Tentang halaman ini.</b> Angka yang ditampilkan adalah rekap agregat per ranting untuk menjaga privasi pemilik kaleng individu. Petugas dan pengurus dapat masuk lewat tombol di pojok kanan atas untuk mencatat atau memverifikasi setoran.</div>
+      <div><b>Tentang halaman ini.</b> Angka yang ditampilkan adalah rekap agregat per ranting untuk menjaga privasi pemilik kaleng individu. Untuk penyaluran ke individu/keluarga, nama penerima disamarkan menjadi "Warga [ranting]" demi menjaga martabat penerima manfaat. Petugas dan pengurus dapat masuk lewat tombol di pojok kanan atas untuk mencatat atau memverifikasi.</div>
     </div>
   </main>
 
@@ -523,6 +600,7 @@
 
     <div class="role-toggle">
       <button class="role-btn active" id="roleBtnPetugas" onclick="setRole('fundraiser')">🧾 Fundraiser</button>
+      <button class="role-btn" id="roleBtnBendahara" onclick="setRole('bendahara')">💰 Bendahara</button>
       <button class="role-btn" id="roleBtnPengurus" onclick="setRole('pengurus')">📋 Pengurus Lazis</button>
     </div>
 
@@ -641,6 +719,101 @@
 </div>
 
 <!-- ===================== DASHBOARD PENGURUS ===================== -->
+<!-- ===================== HALAMAN BENDAHARA — INPUT PENYALURAN ===================== -->
+<div class="view" id="bendaharaView">
+  <div class="mode-strip mode-bendahara">💰 HALAMAN BENDAHARA — INPUT PENYALURAN</div>
+  <main>
+    <div class="page-head">
+      <div class="eyebrow">Input Penyaluran</div>
+      <h1>Catat Penyaluran Dana (Tasyaruf)</h1>
+      <div class="desc">Data akan terlihat oleh pengurus untuk diverifikasi, lalu tampil di halaman publik.</div>
+    </div>
+
+    <div class="panel">
+      <h3>Kategori & Penerima</h3>
+      <div class="panel-sub">Pilih kategori program dan jenis penerima manfaat.</div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="kategoriPenyaluranSelect">Kategori</label>
+          <select id="kategoriPenyaluranSelect">
+            <option value="">Memuat kategori…</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="jenisPenerimaSelect">Jenis Penerima</label>
+          <select id="jenisPenerimaSelect" onchange="onJenisPenerimaChange()">
+            <option value="Institusi">Institusi (masjid, sekolah, dll)</option>
+            <option value="Individu">Individu / Keluarga</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" id="namaInstitusiWrap">
+        <label for="namaPenerimaInput">Nama Institusi</label>
+        <input type="text" id="namaPenerimaInput" placeholder="Contoh: Masjid Al-Ikhlas Ambokembang">
+      </div>
+
+      <div class="field" id="namaIndividuWrap" style="display:none;">
+        <label for="namaPenerimaIndividuInput">Nama Penerima (internal — TIDAK ditampilkan ke publik)</label>
+        <input type="text" id="namaPenerimaIndividuInput" placeholder="Nama asli, untuk arsip internal saja">
+      </div>
+
+      <div class="field" id="rantingPenerimaWrap" style="display:none;">
+        <label for="rantingPenerimaSelect">Ranting / Lokasi Penerima</label>
+        <select id="rantingPenerimaSelect">
+          <option value="">Memuat daftar ranting…</option>
+        </select>
+        <div class="cell-sub" style="margin-top:6px;">Publik akan melihat label "Warga [ranting ini]" — bukan nama asli.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Jumlah Penyaluran</h3>
+      <div class="grid-2">
+        <div class="field">
+          <label for="jumlahPenyaluran">Nominal</label>
+          <div class="amount-input"><span>Rp</span><input type="number" id="jumlahPenyaluran" placeholder="0" min="0"></div>
+        </div>
+        <div class="field"><label for="tglPenyaluran">Tanggal</label><input type="date" id="tglPenyaluran"></div>
+      </div>
+      <div class="field" style="margin-top:16px; margin-bottom:0;">
+        <label for="ketPenyaluran">Keterangan (opsional)</label>
+        <textarea id="ketPenyaluran" placeholder="Contoh: bantuan renovasi atap masjid"></textarea>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Ringkasan</h3>
+      <div class="summary-row"><span class="k">Kategori</span><span class="v" id="sumKategoriPenyaluran">–</span></div>
+      <div class="summary-row"><span class="k">Penerima</span><span class="v" id="sumPenerimaPenyaluran">–</span></div>
+      <div class="summary-row"><span class="k">Nominal</span><span class="v" id="sumJumlahPenyaluran">Rp 0</span></div>
+      <div class="summary-row"><span class="k">Bendahara input</span><span class="v" id="sumBendahara">–</span></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-secondary" onclick="resetFormPenyaluran()">Bersihkan</button>
+      <button class="btn-primary" onclick="submitPenyaluran()">Simpan Penyaluran</button>
+    </div>
+
+    <div class="panel" style="margin-top:24px;">
+      <div class="panel-head">
+        <div><h2 style="font-size:18px;">Riwayat Penyaluran Saya</h2><div class="sub">50 penyaluran terakhir yang Anda input</div></div>
+        <button class="btn-export" onclick="loadRiwayatBendahara()">↻ Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table class="setoran-table">
+          <thead>
+            <tr><th>Tanggal</th><th>Kategori</th><th>Penerima</th><th>Nominal</th><th>Status</th></tr>
+          </thead>
+          <tbody id="riwayatBendaharaBody">
+            <tr><td colspan="5" class="table-empty">Memuat data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
 <div class="view" id="pengurusView">
   <div class="mode-strip mode-pengurus">📋 HALAMAN PENGURUS LAZIS</div>
   <main>
@@ -716,6 +889,60 @@
         </table>
       </div>
     </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>Perolehan per Fundraiser</h2><div class="sub">Total setoran terverifikasi per fundraiser — dasar hitung upah/insentif bulanan. Mengikuti pilihan bulan/tahun di atas.</div></div>
+        <button class="btn-export" onclick="exportFundraiserCSV()">⬇ Export CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table class="fr-table">
+          <thead>
+            <tr><th>Fundraiser</th><th>Jumlah Setoran</th><th>Kaleng Ditangani</th><th>Total Nominal (Terverifikasi)</th></tr>
+          </thead>
+          <tbody id="fundraiserTableBody">
+            <tr><td colspan="4" class="table-empty">Memuat data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pengurus-note" style="margin-top:16px;">
+        <span>💡</span>
+        <div>Angka ini hanya menghitung setoran berstatus <b>Terverifikasi</b> — pastikan semua setoran bulan ini sudah diverifikasi di atas sebelum dipakai untuk hitung upah, supaya angkanya final.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div><h2>Daftar Penyaluran</h2><div class="sub">Verifikasi penyaluran dana yang dicatat bendahara</div></div>
+        <button class="btn-export" onclick="exportPenyaluranCSV()">⬇ Export CSV</button>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-status="Belum diverifikasi" onclick="setStatusFilterPenyaluran('Belum diverifikasi', this)">Belum diverifikasi</button>
+        <button class="filter-tab" data-status="Terverifikasi" onclick="setStatusFilterPenyaluran('Terverifikasi', this)">Terverifikasi</button>
+        <button class="filter-tab" data-status="Ditolak" onclick="setStatusFilterPenyaluran('Ditolak', this)">Ditolak</button>
+        <button class="filter-tab" data-status="Semua" onclick="setStatusFilterPenyaluran('Semua', this)">Semua</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="setoran-table">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Kategori</th>
+              <th>Penerima</th>
+              <th>Nominal</th>
+              <th>Bendahara</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="penyaluranTableBody">
+            <tr><td colspan="7" class="table-empty">Memuat data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -768,7 +995,12 @@
   function setRole(role){
     selectedRole = role;
     document.getElementById('roleBtnPetugas').classList.toggle('active', role === 'fundraiser');
+    document.getElementById('roleBtnBendahara').classList.toggle('active', role === 'bendahara');
     document.getElementById('roleBtnPengurus').classList.toggle('active', role === 'pengurus');
+  }
+
+  function roleLabelOf(role){
+    return role === 'pengurus' ? 'Pengurus Lazis' : role === 'bendahara' ? 'Bendahara Amil' : 'Fundraiser';
   }
 
   async function doLogin(){
@@ -801,15 +1033,21 @@
       document.getElementById('loginBtn').style.display = 'none';
       document.getElementById('whoBar').style.display = 'flex';
       document.getElementById('whoName').textContent = currentUser.nama;
-      document.getElementById('whoRole').textContent = selectedRole === 'pengurus' ? 'Pengurus Lazis' : 'Fundraiser';
+      document.getElementById('whoRole').textContent = roleLabelOf(selectedRole);
       document.getElementById('avatarInit').textContent = currentUser.nama.charAt(0);
 
-      const roleLabel = selectedRole === 'pengurus' ? 'Pengurus Lazis' : 'Fundraiser';
-      showToast(`✓ Berhasil masuk sebagai ${roleLabel} (${currentUser.nama})`, true);
+      showToast(`✓ Berhasil masuk sebagai ${roleLabelOf(selectedRole)} (${currentUser.nama})`, true);
 
       if(selectedRole === 'pengurus'){
         goTo('pengurusView');
         loadPengurusDashboard();
+      } else if(selectedRole === 'bendahara'){
+        const todayP = new Date().toISOString().split('T')[0];
+        document.getElementById('tglPenyaluran').value = todayP;
+        loadKategoriPenyaluranOptions();
+        loadRantingOptionsPenyaluran();
+        loadRiwayatBendahara();
+        goTo('bendaharaView');
       } else {
         document.getElementById('sumPetugas').textContent = currentUser.nama;
         const today = new Date().toISOString().split('T')[0];
@@ -881,6 +1119,165 @@
     return opt ? (opt.dataset.kategori || 'Ranting') : '';
   }
 
+  // ===================== HALAMAN BENDAHARA — PENYALURAN =====================
+
+  async function loadKategoriPenyaluranOptions(){
+    const select = document.getElementById('kategoriPenyaluranSelect');
+    select.innerHTML = '<option value="">Memuat kategori…</option>';
+    if(WEB_APP_URL.includes('PASTE_URL')) return;
+    try {
+      const res = await fetch(`${WEB_APP_URL}?action=getKategoriPenyaluran`).then(r => r.json());
+      if(!res.success || !res.kategori.length){
+        select.innerHTML = '<option value="">Gagal memuat kategori</option>';
+        return;
+      }
+      select.innerHTML = '<option value="">Pilih kategori</option>' +
+        res.kategori.map(k => `<option value="${k}">${k}</option>`).join('');
+    } catch(err){
+      select.innerHTML = '<option value="">Gagal memuat kategori</option>';
+    }
+  }
+
+  /** Dropdown ranting untuk label publik penerima individu — cuma Ranting,
+   *  bukan AUM (bantuan individu logisnya berbasis lokasi warga). */
+  async function loadRantingOptionsPenyaluran(){
+    const select = document.getElementById('rantingPenerimaSelect');
+    select.innerHTML = '<option value="">Memuat daftar ranting…</option>';
+    if(WEB_APP_URL.includes('PASTE_URL')) return;
+    try {
+      const res = await fetch(`${WEB_APP_URL}?action=getEntitasList`).then(r => r.json());
+      if(!res.success){
+        select.innerHTML = '<option value="">Gagal memuat daftar</option>';
+        return;
+      }
+      const rantingSaja = res.entitas.filter(e => e.kategori !== 'AUM');
+      select.innerHTML = '<option value="">Pilih ranting</option>' +
+        rantingSaja.map(e => `<option value="${e.nama_entitas}">${e.nama_entitas}</option>`).join('');
+    } catch(err){
+      select.innerHTML = '<option value="">Gagal memuat daftar</option>';
+    }
+  }
+
+  function onJenisPenerimaChange(){
+    const jenis = document.getElementById('jenisPenerimaSelect').value;
+    document.getElementById('namaInstitusiWrap').style.display = jenis === 'Institusi' ? 'block' : 'none';
+    document.getElementById('namaIndividuWrap').style.display = jenis === 'Individu' ? 'block' : 'none';
+    document.getElementById('rantingPenerimaWrap').style.display = jenis === 'Individu' ? 'block' : 'none';
+    updateRingkasanPenyaluran();
+  }
+
+  function updateRingkasanPenyaluran(){
+    const kategori = document.getElementById('kategoriPenyaluranSelect').value;
+    const jenis = document.getElementById('jenisPenerimaSelect').value;
+    const namaInstitusi = document.getElementById('namaPenerimaInput').value;
+    const namaIndividu = document.getElementById('namaPenerimaIndividuInput').value;
+    const ranting = document.getElementById('rantingPenerimaSelect').value;
+    const jumlah = document.getElementById('jumlahPenyaluran').value;
+
+    document.getElementById('sumKategoriPenyaluran').textContent = kategori || '–';
+    if(jenis === 'Institusi'){
+      document.getElementById('sumPenerimaPenyaluran').textContent = namaInstitusi || '–';
+    } else {
+      document.getElementById('sumPenerimaPenyaluran').textContent = namaIndividu
+        ? `${namaIndividu} (publik: Warga ${ranting || '?'})` : '–';
+    }
+    document.getElementById('sumJumlahPenyaluran').textContent = 'Rp ' + Number(jumlah || 0).toLocaleString('id-ID');
+    if(currentUser) document.getElementById('sumBendahara').textContent = currentUser.nama;
+  }
+
+  ['kategoriPenyaluranSelect','namaPenerimaInput','namaPenerimaIndividuInput','rantingPenerimaSelect','jumlahPenyaluran']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('input', updateRingkasanPenyaluran);
+    });
+
+  function resetFormPenyaluran(){
+    document.getElementById('kategoriPenyaluranSelect').value = '';
+    document.getElementById('jenisPenerimaSelect').value = 'Institusi';
+    document.getElementById('namaPenerimaInput').value = '';
+    document.getElementById('namaPenerimaIndividuInput').value = '';
+    document.getElementById('rantingPenerimaSelect').value = '';
+    document.getElementById('jumlahPenyaluran').value = '';
+    document.getElementById('ketPenyaluran').value = '';
+    onJenisPenerimaChange();
+  }
+
+  async function submitPenyaluran(){
+    const kategori = document.getElementById('kategoriPenyaluranSelect').value;
+    const jenis = document.getElementById('jenisPenerimaSelect').value;
+    const namaPenerima = jenis === 'Institusi'
+      ? document.getElementById('namaPenerimaInput').value.trim()
+      : document.getElementById('namaPenerimaIndividuInput').value.trim();
+    const ranting = document.getElementById('rantingPenerimaSelect').value;
+    const jumlah = document.getElementById('jumlahPenyaluran').value;
+    const tanggal = document.getElementById('tglPenyaluran').value;
+
+    if(!kategori || !namaPenerima || !jumlah || (jenis === 'Individu' && !ranting)){
+      showToast('Lengkapi kategori, nama penerima, ranting (jika individu), dan nominal', false);
+      return;
+    }
+
+    const payload = {
+      action: 'submitPenyaluran',
+      tanggal, kategori, jenis_penerima: jenis, nama_penerima: namaPenerima,
+      ranting: jenis === 'Individu' ? ranting : '',
+      jumlah, bendahara: currentUser ? currentUser.nama : '',
+      keterangan: document.getElementById('ketPenyaluran').value, bukti_url: ''
+    };
+
+    const btn = document.querySelector('#bendaharaView .btn-primary');
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan…';
+
+    try {
+      const res = await postToBackend(payload);
+      if(!res.success){
+        showToast(res.message || 'Gagal menyimpan penyaluran', false);
+        return;
+      }
+      showToast('Penyaluran berhasil disimpan, menunggu verifikasi pengurus', true);
+      setTimeout(resetFormPenyaluran, 900);
+      loadRiwayatBendahara();
+    } catch(err){
+      showToast('Gagal menghubungi server. Cek koneksi atau URL Web App.', false);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Simpan Penyaluran';
+    }
+  }
+
+  async function loadRiwayatBendahara(){
+    const tbody = document.getElementById('riwayatBendaharaBody');
+    if(!currentUser || WEB_APP_URL.includes('PASTE_URL')){
+      tbody.innerHTML = '<tr><td colspan="5" class="table-empty">Belum bisa memuat riwayat.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '<tr><td colspan="5" class="table-empty">Memuat data…</td></tr>';
+    try {
+      const url = `${WEB_APP_URL}?action=getRiwayatBendahara&bendahara=${encodeURIComponent(currentUser.nama)}`;
+      const res = await fetch(url).then(r => r.json());
+      if(!res.success || !res.penyaluran.length){
+        tbody.innerHTML = '<tr><td colspan="5" class="table-empty">Belum ada penyaluran yang Anda input.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = res.penyaluran.map(p => {
+        const badgeClass = p.status_verifikasi === 'Terverifikasi' ? 'ok' : p.status_verifikasi === 'Ditolak' ? 'tolak' : 'belum';
+        const tglTampil = p.tanggal ? new Date(p.tanggal).toLocaleDateString('id-ID') : '-';
+        const penerimaTampil = p.jenis_penerima === 'Institusi' ? p.nama_penerima : `${p.nama_penerima} (${p.ranting})`;
+        return `
+          <tr>
+            <td>${tglTampil}</td>
+            <td>${p.kategori}</td>
+            <td>${penerimaTampil}</td>
+            <td class="cell-rp">Rp ${Number(p.jumlah || 0).toLocaleString('id-ID')}</td>
+            <td><span class="status-badge ${badgeClass}">${p.status_verifikasi}</span></td>
+          </tr>`;
+      }).join('');
+    } catch(err){
+      tbody.innerHTML = '<tr><td colspan="5" class="table-empty">Gagal menghubungi server.</td></tr>';
+    }
+  }
+
   /** Isi ulang dropdown kaleng dari Data_Munfiq sesuai entitas yang login. */
   async function loadKalengOptions(entitas){
     const select = document.getElementById('kalengSelect');
@@ -922,6 +1319,7 @@
     if(dataBulanIni && dataBulanIni.leaderboard && dataBulanIni.leaderboard.length){
       usedFallbackMonth = false;
       renderLeaderboard(dataBulanIni);
+      loadPenyaluranPublik();
       return;
     }
 
@@ -934,6 +1332,7 @@
       if(data && data.leaderboard && data.leaderboard.length){
         viewBulan = b; viewTahun = t; usedFallbackMonth = true;
         renderLeaderboard(data);
+        loadPenyaluranPublik();
         return;
       }
     }
@@ -941,6 +1340,7 @@
     // Benar-benar belum ada data sama sekali di 12 bulan terakhir
     usedFallbackMonth = false;
     renderEmptyState('Belum ada setoran yang tercatat. Data akan muncul di sini setelah fundraiser mulai input.');
+    loadPenyaluranPublik();
   }
 
   async function fetchPeriode(bulan, tahun){
@@ -971,6 +1371,7 @@
     } else {
       renderEmptyState(`Belum ada setoran terverifikasi untuk ${NAMA_BULAN[b-1]} ${t}.`);
     }
+    loadPenyaluranPublik();
   }
 
   function updatePeriodeArrows(){
@@ -1020,6 +1421,61 @@
           </div>
         </div>`;
     }).join('');
+  }
+
+  /** Muat panel "Penyaluran Dana" publik untuk periode yang SAMA dengan
+   *  papan perolehan (mengikuti viewBulan/viewTahun global). */
+  async function loadPenyaluranPublik(){
+    const katWrap = document.getElementById('salurKategoriList');
+    const daftarWrap = document.getElementById('salurDaftarWrap');
+    if(WEB_APP_URL.includes('PASTE_URL')){
+      katWrap.innerHTML = '<div class="table-empty">Belum tersambung ke database.</div>';
+      return;
+    }
+    try {
+      const url = `${WEB_APP_URL}?action=getPenyaluranPublik&bulan=${viewBulan}&tahun=${viewTahun}`;
+      const res = await fetch(url).then(r => r.json());
+      if(!res.success) throw new Error();
+
+      document.getElementById('salurTotal').textContent = 'Rp ' + Number(res.total_tersalurkan).toLocaleString('id-ID');
+
+      const totalTerkumpulEl = document.querySelectorAll('.stat-card .num')[0];
+      const totalTerkumpul = totalTerkumpulEl ? Number(totalTerkumpulEl.textContent.replace(/[^0-9]/g,'')) : 0;
+      const pct = totalTerkumpul > 0 ? Math.min(100, Math.round(res.total_tersalurkan / totalTerkumpul * 100)) : 0;
+      document.getElementById('salurProgressFill').style.width = pct + '%';
+      document.getElementById('salurProgressLabel').textContent =
+        totalTerkumpul > 0 ? `${pct}% dari Rp ${totalTerkumpul.toLocaleString('id-ID')} yang terkumpul periode ini`
+                            : 'Belum ada dana terkumpul untuk dibandingkan pada periode ini';
+
+      if(!res.per_kategori.length){
+        katWrap.innerHTML = '<div class="table-empty">Belum ada penyaluran terverifikasi untuk periode ini.</div>';
+        daftarWrap.style.display = 'none';
+        return;
+      }
+
+      const maxKat = Math.max(...res.per_kategori.map(k => k.total), 1);
+      katWrap.innerHTML = res.per_kategori.map(k => {
+        const pctKat = Math.round(k.total / maxKat * 100);
+        return `
+          <div class="salur-kat-row">
+            <div class="salur-kat-name">${k.kategori}</div>
+            <div class="salur-kat-track"><div class="salur-kat-fill" style="width:${pctKat}%;"></div></div>
+            <div class="salur-kat-rp">Rp ${Number(k.total).toLocaleString('id-ID')}</div>
+          </div>`;
+      }).join('');
+
+      if(res.daftar && res.daftar.length){
+        daftarWrap.style.display = 'block';
+        document.getElementById('salurDaftarBody').innerHTML = res.daftar.map(d => {
+          const tgl = d.tanggal ? new Date(d.tanggal).toLocaleDateString('id-ID') : '-';
+          return `<tr><td>${tgl}</td><td>${d.kategori}</td><td>${d.label}</td><td class="cell-rp">Rp ${Number(d.jumlah).toLocaleString('id-ID')}</td></tr>`;
+        }).join('');
+      } else {
+        daftarWrap.style.display = 'none';
+      }
+    } catch(err){
+      katWrap.innerHTML = '<div class="table-empty">Gagal memuat data penyaluran.</div>';
+    }
   }
 
   /** Kirim POST ke Apps Script. Pakai text/plain agar tidak kena CORS preflight. */
@@ -1084,17 +1540,28 @@
 
   // ===================== DASHBOARD PENGURUS =====================
   let statusFilter = 'Belum diverifikasi';
+  let statusFilterPenyaluran = 'Belum diverifikasi';
 
   function setStatusFilter(status, btn){
     statusFilter = status;
-    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.parentElement.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     loadSetoranTable();
   }
 
+  function setStatusFilterPenyaluran(status, btn){
+    statusFilterPenyaluran = status;
+    btn.parentElement.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadPenyaluranTable();
+  }
+
   async function loadPengurusDashboard(){
     initPeriodeSelectors();
-    await Promise.all([loadPerbandinganBulan(), loadPengurusLeaderboard(), loadSetoranTable()]);
+    await Promise.all([
+      loadPerbandinganBulan(), loadPengurusLeaderboard(), loadSetoranTable(),
+      loadRekapFundraiser(), loadPenyaluranTable()
+    ]);
   }
 
   /** Isi dropdown Bulan & Tahun, default ke bulan berjalan. */
@@ -1124,6 +1591,7 @@
 
   function onRekapPeriodeChange(){
     loadPengurusLeaderboard();
+    loadRekapFundraiser();
   }
 
   /** Kartu perbandingan total bulan ini vs bulan lalu. */
@@ -1299,6 +1767,148 @@
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `setoran_ihsan_kolektor_${statusFilter.replace(/\s+/g,'_')}.csv`;
+    link.click();
+  }
+
+  // ===================== PEROLEHAN PER FUNDRAISER (dashboard pengurus) =====================
+  let lastFundraiserData = [];
+
+  async function loadRekapFundraiser(){
+    const tbody = document.getElementById('fundraiserTableBody');
+    if(WEB_APP_URL.includes('PASTE_URL')){
+      tbody.innerHTML = '<tr><td colspan="4" class="table-empty">Sambungkan WEB_APP_URL terlebih dahulu.</td></tr>';
+      return;
+    }
+    const bulan = document.getElementById('rekapBulanSelect').value;
+    const tahun = document.getElementById('rekapTahunSelect').value;
+    if(!bulan || !tahun) return;
+
+    tbody.innerHTML = '<tr><td colspan="4" class="table-empty">Memuat data…</td></tr>';
+    try {
+      const url = `${WEB_APP_URL}?action=getRekapFundraiser&bulan=${bulan}&tahun=${tahun}`;
+      const res = await fetch(url).then(r => r.json());
+      if(!res.success || !res.fundraiser.length){
+        lastFundraiserData = [];
+        tbody.innerHTML = `<tr><td colspan="4" class="table-empty">Belum ada setoran untuk ${NAMA_BULAN[bulan-1]} ${tahun}.</td></tr>`;
+        return;
+      }
+      lastFundraiserData = res.fundraiser;
+      const medali = ['🥇','🥈','🥉'];
+      tbody.innerHTML = res.fundraiser.map((f, i) => `
+        <tr>
+          <td class="fr-name">${medali[i] || `<span class="fr-rank-badge">${i+1}</span>`} ${f.fundraiser}</td>
+          <td>${f.jumlah_setoran}</td>
+          <td>${f.kaleng_ditangani}</td>
+          <td class="cell-rp">Rp ${Number(f.total_nominal).toLocaleString('id-ID')}</td>
+        </tr>`).join('');
+    } catch(err){
+      tbody.innerHTML = '<tr><td colspan="4" class="table-empty">Gagal menghubungi server.</td></tr>';
+    }
+  }
+
+  function exportFundraiserCSV(){
+    if(!lastFundraiserData.length){
+      showToast('Tidak ada data untuk diekspor', false);
+      return;
+    }
+    const bulan = document.getElementById('rekapBulanSelect').value;
+    const tahun = document.getElementById('rekapTahunSelect').value;
+    const headers = ['fundraiser','jumlah_setoran','kaleng_ditangani','total_nominal'];
+    const csvRows = [headers.join(',')];
+    lastFundraiserData.forEach(f => {
+      const row = headers.map(h => `"${String(f[h] ?? '').replace(/"/g,'""')}"`);
+      csvRows.push(row.join(','));
+    });
+    const blob = new Blob([csvRows.join('\n')], { type:'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `perolehan_fundraiser_${NAMA_BULAN[bulan-1]}_${tahun}.csv`;
+    link.click();
+  }
+
+  // ===================== VERIFIKASI PENYALURAN (dashboard pengurus) =====================
+  let lastPenyaluranData = [];
+
+  async function loadPenyaluranTable(){
+    const tbody = document.getElementById('penyaluranTableBody');
+    if(WEB_APP_URL.includes('PASTE_URL')){
+      tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Sambungkan WEB_APP_URL terlebih dahulu.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Memuat data…</td></tr>';
+    try {
+      const url = `${WEB_APP_URL}?action=getPenyaluranList&status=${encodeURIComponent(statusFilterPenyaluran)}`;
+      const res = await fetch(url).then(r => r.json());
+      if(!res.success){
+        tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Gagal memuat data.</td></tr>';
+        return;
+      }
+      lastPenyaluranData = res.penyaluran || [];
+
+      if(!lastPenyaluranData.length){
+        tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Tidak ada penyaluran untuk filter ini.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = lastPenyaluranData.map(p => {
+        const badgeClass = p.status_verifikasi === 'Terverifikasi' ? 'ok' : p.status_verifikasi === 'Ditolak' ? 'tolak' : 'belum';
+        const tglTampil = p.tanggal ? new Date(p.tanggal).toLocaleDateString('id-ID') : '-';
+        const penerimaTampil = p.jenis_penerima === 'Institusi' ? p.nama_penerima : `${p.nama_penerima} <span class="cell-sub">(${p.ranting})</span>`;
+        const actions = p.status_verifikasi === 'Belum diverifikasi'
+          ? `<div class="row-actions">
+               <button class="btn-mini approve" onclick="verifyPenyaluran('${p.id_penyaluran}','Terverifikasi')">✓ Verifikasi</button>
+               <button class="btn-mini reject" onclick="verifyPenyaluran('${p.id_penyaluran}','Ditolak')">✕ Tolak</button>
+             </div>`
+          : `<span class="cell-sub">—</span>`;
+        return `
+          <tr>
+            <td>${tglTampil}</td>
+            <td>${p.kategori}</td>
+            <td>${penerimaTampil}</td>
+            <td class="cell-rp">Rp ${Number(p.jumlah || 0).toLocaleString('id-ID')}</td>
+            <td>${p.bendahara || '-'}</td>
+            <td><span class="status-badge ${badgeClass}">${p.status_verifikasi}</span></td>
+            <td>${actions}</td>
+          </tr>`;
+      }).join('');
+    } catch(err){
+      tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Gagal menghubungi server.</td></tr>';
+    }
+  }
+
+  async function verifyPenyaluran(id_penyaluran, status_baru){
+    try {
+      const res = await postToBackend({
+        action: 'verifyPenyaluran',
+        id_penyaluran: id_penyaluran,
+        status_baru: status_baru
+      });
+      if(!res.success){
+        showToast(res.message || 'Gagal memperbarui status', false);
+        return;
+      }
+      showToast(status_baru === 'Terverifikasi' ? 'Penyaluran diverifikasi' : 'Penyaluran ditolak', status_baru === 'Terverifikasi');
+      loadPenyaluranTable();
+    } catch(err){
+      showToast('Gagal menghubungi server', false);
+    }
+  }
+
+  function exportPenyaluranCSV(){
+    if(!lastPenyaluranData.length){
+      showToast('Tidak ada data untuk diekspor', false);
+      return;
+    }
+    const headers = ['id_penyaluran','tanggal','kategori','jenis_penerima','nama_penerima','ranting','jumlah','bendahara','keterangan','status_verifikasi'];
+    const csvRows = [headers.join(',')];
+    lastPenyaluranData.forEach(p => {
+      const row = headers.map(h => `"${String(p[h] ?? '').replace(/"/g,'""')}"`);
+      csvRows.push(row.join(','));
+    });
+    const blob = new Blob([csvRows.join('\n')], { type:'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `penyaluran_ihsan_kolektor_${statusFilterPenyaluran.replace(/\s+/g,'_')}.csv`;
     link.click();
   }
 
